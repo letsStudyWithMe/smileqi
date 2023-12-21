@@ -120,6 +120,12 @@
                 <artifactId>smileqi-common</artifactId>
                 <version>${smileqi.version}</version>
             </dependency>
+            <!-- 框架模块-->
+            <dependency>
+                <groupId>com.smileqi</groupId>
+                <artifactId>smileqi-framework</artifactId>
+                <version>${smileqi.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -127,6 +133,7 @@
         <module>smileqi-admin</module>
         <module>smileqi-system</module>
         <module>smileqi-common</module>
+        <module>smileqi-framework</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -15,6 +15,7 @@
     </description>
 
     <dependencies>
+        <!-- SpringBoot Web容器 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -31,12 +32,7 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.3</version>
         </dependency>
-        <!-- log4j日志相关坐标 -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
-        </dependency>
+        <!-- 测试依赖-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

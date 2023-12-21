@@ -1,25 +1,25 @@
-package com.smileqi.web.controller;
+package com.smileqi.web.controller.user;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.qi.springbootinit.annotation.AuthCheck;
-import com.qi.springbootinit.common.BaseResponse;
-import com.qi.springbootinit.common.DeleteRequest;
-import com.qi.springbootinit.common.ErrorCode;
-import com.qi.springbootinit.common.ResultUtils;
-import com.qi.springbootinit.constant.UserConstant;
-import com.qi.springbootinit.exception.BusinessException;
-import com.qi.springbootinit.exception.ThrowUtils;
-import com.qi.springbootinit.model.dto.user.*;
-import com.qi.springbootinit.model.entity.User;
-import com.qi.springbootinit.model.vo.LoginUserVO;
-import com.qi.springbootinit.model.vo.UserVO;
-import com.qi.springbootinit.service.UserService;
+import com.smileqi.common.enums.ErrorCode;
+import com.smileqi.common.exception.BusinessException;
+import com.smileqi.common.exception.ThrowUtils;
+import com.smileqi.common.request.DeleteRequest;
+import com.smileqi.common.response.BaseResponse;
+import com.smileqi.common.utils.ResultUtils;
+import com.smileqi.user.model.domain.User;
+import com.smileqi.user.model.request.*;
+import com.smileqi.user.model.vo.LoginUserVO;
+import com.smileqi.user.model.vo.UserVO;
+import com.smileqi.user.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -30,6 +30,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 @Slf4j
+@Tag(name = "用户接口")
 public class UserController {
 
     @Resource
@@ -42,6 +43,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/register")
+    @Operation(summary = "用户注册")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -113,7 +115,6 @@ public class UserController {
      * @return
      */
     @PostMapping("/add")
-    @AuthCheck(mustRole = UserConstant.ROOT_ROLE)
     public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest, HttpServletRequest request) {
         if (userAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -133,7 +134,6 @@ public class UserController {
      * @return
      */
     @PostMapping("/delete")
-    @AuthCheck(mustRole = UserConstant.ROOT_ROLE)
     public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -150,7 +150,6 @@ public class UserController {
      * @return
      */
     @PostMapping("/update")
-    @AuthCheck(mustRole = UserConstant.ROOT_ROLE)
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
             HttpServletRequest request) {
         if (userUpdateRequest == null || userUpdateRequest.getId() == null) {
@@ -171,7 +170,6 @@ public class UserController {
      * @return
      */
     @GetMapping("/get")
-    @AuthCheck(mustRole = UserConstant.ROOT_ROLE)
     public BaseResponse<User> getUserById(long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -203,9 +201,8 @@ public class UserController {
      * @return
      */
     @PostMapping("/list/page")
-    @AuthCheck(mustRole = UserConstant.ROOT_ROLE)
     public BaseResponse<Page<User>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest,
-            HttpServletRequest request) {
+                                                   HttpServletRequest request) {
         long current = userQueryRequest.getCurrent();
         long size = userQueryRequest.getPageSize();
         Page<User> userPage = userService.page(new Page<>(current, size),
