@@ -7,7 +7,7 @@ import com.smileqi.user.model.request.UserQueryRequest;
 import com.smileqi.user.model.vo.LoginUserVO;
 import com.smileqi.user.model.vo.UserVO;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
