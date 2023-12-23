@@ -7,24 +7,24 @@
     <resultMap id="BaseResultMap" type="com.smileqi.system.model.domain.SysMenu">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="parent_id" column="parent_id" jdbcType="BIGINT"/>
-            <result property="order_num" column="order_num" jdbcType="INTEGER"/>
+            <result property="parentId" column="parentId" jdbcType="BIGINT"/>
+            <result property="orderNum" column="orderNum" jdbcType="INTEGER"/>
             <result property="path" column="path" jdbcType="VARCHAR"/>
             <result property="status" column="status" jdbcType="CHAR"/>
             <result property="perms" column="perms" jdbcType="VARCHAR"/>
             <result property="icon" column="icon" jdbcType="VARCHAR"/>
-            <result property="create_by" column="create_by" jdbcType="VARCHAR"/>
-            <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="update_by" column="update_by" jdbcType="VARCHAR"/>
-            <result property="update_time" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="createBy" column="createBy" jdbcType="VARCHAR"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="updateBy" column="updateBy" jdbcType="VARCHAR"/>
+            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
             <result property="remark" column="remark" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name,parent_id,
-        order_num,path,status,
-        perms,icon,create_by,
-        create_time,update_by,update_time,
+        id,name,parentId,
+        orderNum,path,status,
+        perms,icon,createBy,
+        createTime,updateBy,updateTime,
         remark
     </sql>
 </mapper>

@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 菜单权限表
@@ -28,12 +30,12 @@ public class SysMenu implements Serializable {
     /**
      * 父菜单ID
      */
-    private Long parent_id;
+    private Long parentId;
 
     /**
      * 显示顺序
      */
-    private Integer order_num;
+    private Integer orderNum;
 
     /**
      * 路由地址
@@ -59,29 +61,42 @@ public class SysMenu implements Serializable {
     /**
      * 创建者
      */
-    private String create_by;
+    private String createBy;
 
     /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    private Date create_time;
+    private Date createTime;
 
     /**
      * 更新者
      */
-    private String update_by;
+    private String updateBy;
 
     /**
      * 更新时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    private Date update_time;
+    private Date updateTime;
 
     /**
      * 备注
      */
     private String remark;
+
+    /**
+     * 子菜单
+     */
+    private List<SysMenu> children = new ArrayList<>();
+
+    public List<SysMenu> getChildren() {
+        return children;
+    }
+
+    public void setChildren(SysMenu children) {
+        this.children.add(children);
+    }
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
@@ -100,16 +115,16 @@ public class SysMenu implements Serializable {
         SysMenu other = (SysMenu) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-            && (this.getParent_id() == null ? other.getParent_id() == null : this.getParent_id().equals(other.getParent_id()))
-            && (this.getOrder_num() == null ? other.getOrder_num() == null : this.getOrder_num().equals(other.getOrder_num()))
+            && (this.getParentId() == null ? other.getParentId() == null : this.getParentId().equals(other.getParentId()))
+            && (this.getOrderNum() == null ? other.getOrderNum() == null : this.getOrderNum().equals(other.getOrderNum()))
             && (this.getPath() == null ? other.getPath() == null : this.getPath().equals(other.getPath()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getPerms() == null ? other.getPerms() == null : this.getPerms().equals(other.getPerms()))
             && (this.getIcon() == null ? other.getIcon() == null : this.getIcon().equals(other.getIcon()))
-            && (this.getCreate_by() == null ? other.getCreate_by() == null : this.getCreate_by().equals(other.getCreate_by()))
-            && (this.getCreate_time() == null ? other.getCreate_time() == null : this.getCreate_time().equals(other.getCreate_time()))
-            && (this.getUpdate_by() == null ? other.getUpdate_by() == null : this.getUpdate_by().equals(other.getUpdate_by()))
-            && (this.getUpdate_time() == null ? other.getUpdate_time() == null : this.getUpdate_time().equals(other.getUpdate_time()))
+            && (this.getCreateBy() == null ? other.getCreateBy() == null : this.getCreateBy().equals(other.getCreateBy()))
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getUpdateBy() == null ? other.getUpdateBy() == null : this.getUpdateBy().equals(other.getUpdateBy()))
+            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
             && (this.getRemark() == null ? other.getRemark() == null : this.getRemark().equals(other.getRemark()));
     }
 
@@ -119,16 +134,16 @@ public class SysMenu implements Serializable {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((getParent_id() == null) ? 0 : getParent_id().hashCode());
-        result = prime * result + ((getOrder_num() == null) ? 0 : getOrder_num().hashCode());
+        result = prime * result + ((getParentId() == null) ? 0 : getParentId().hashCode());
+        result = prime * result + ((getOrderNum() == null) ? 0 : getOrderNum().hashCode());
         result = prime * result + ((getPath() == null) ? 0 : getPath().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getPerms() == null) ? 0 : getPerms().hashCode());
         result = prime * result + ((getIcon() == null) ? 0 : getIcon().hashCode());
-        result = prime * result + ((getCreate_by() == null) ? 0 : getCreate_by().hashCode());
-        result = prime * result + ((getCreate_time() == null) ? 0 : getCreate_time().hashCode());
-        result = prime * result + ((getUpdate_by() == null) ? 0 : getUpdate_by().hashCode());
-        result = prime * result + ((getUpdate_time() == null) ? 0 : getUpdate_time().hashCode());
+        result = prime * result + ((getCreateBy() == null) ? 0 : getCreateBy().hashCode());
+        result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
+        result = prime * result + ((getUpdateBy() == null) ? 0 : getUpdateBy().hashCode());
+        result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getRemark() == null) ? 0 : getRemark().hashCode());
         return result;
     }
@@ -141,16 +156,16 @@ public class SysMenu implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", name=").append(name);
-        sb.append(", parent_id=").append(parent_id);
-        sb.append(", order_num=").append(order_num);
+        sb.append(", parentId=").append(parentId);
+        sb.append(", orderNum=").append(orderNum);
         sb.append(", path=").append(path);
         sb.append(", status=").append(status);
         sb.append(", perms=").append(perms);
         sb.append(", icon=").append(icon);
-        sb.append(", create_by=").append(create_by);
-        sb.append(", create_time=").append(create_time);
-        sb.append(", update_by=").append(update_by);
-        sb.append(", update_time=").append(update_time);
+        sb.append(", createBy=").append(createBy);
+        sb.append(", createTime=").append(createTime);
+        sb.append(", updateBy=").append(updateBy);
+        sb.append(", updateTime=").append(updateTime);
         sb.append(", remark=").append(remark);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

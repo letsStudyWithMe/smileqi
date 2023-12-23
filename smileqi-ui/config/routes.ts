@@ -22,7 +22,6 @@
       { path: '/admin/sub-page', component: './Admin' },
     ],
   },
-  { icon: 'table', path: '/list', component: './TableList' },
   { path: '/', redirect: '/welcome' },
   { path: '*', layout: false, component: './404' },
 ];

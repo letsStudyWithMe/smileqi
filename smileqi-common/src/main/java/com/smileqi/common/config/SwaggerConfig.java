@@ -24,14 +24,12 @@ public class SwaggerConfig {
 
 
     // 接口较多，可以进行分组，此处进行注释
-/*
-    @Bean
+/*    @Bean
     public GroupedOpenApi backendGroup() {
         return GroupedOpenApi.builder().group("user").displayName("user")
                 .addOpenApiCustomizer(openApi -> openApi.info(new Info().title("UJCMS 后台 API").version("1.0.0")))
                 .packagesToScan("com.smileqi.web.controller.user")
                 .pathsToMatch("/**")
                 .build();
-    }
-*/
+    }*/
 }

@@ -12,6 +12,7 @@
     "experimentalDecorators": true,
     "strict": true,
     "resolveJsonModule": true,
+    "suppressImplicitAnyIndexErrors": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
       "@/*": ["./src/*"],

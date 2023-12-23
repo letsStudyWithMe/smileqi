@@ -45,17 +45,13 @@ public class UserController {
     @Operation(summary = "用户注册")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
         }
         String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
         String checkPassword = userRegisterRequest.getCheckPassword();
         String userName = userRegisterRequest.getUserName();
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword,userName)) {
-            return null;
-        }
-        long result = userService.userRegister(userAccount, userPassword, checkPassword,userName);
-        return ResultUtils.success(result);
+        return userService.userRegister(userAccount, userPassword, checkPassword,userName);
     }
 
     /**
@@ -68,15 +64,11 @@ public class UserController {
     @PostMapping("/login")
     public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
         }
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
-        if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
-        return ResultUtils.success(loginUserVO);
+        return userService.userLogin(userAccount, userPassword, request);
     }
 
     /**

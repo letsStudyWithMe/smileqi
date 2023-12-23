@@ -2,6 +2,7 @@ package com.smileqi.user.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.smileqi.common.response.BaseResponse;
 import com.smileqi.user.model.domain.User;
 import com.smileqi.user.model.request.UserQueryRequest;
 import com.smileqi.user.model.vo.LoginUserVO;
@@ -25,7 +26,7 @@ public interface UserService extends IService<User> {
      * @param userName 昵称
      * @return 新用户 id
      */
-    long userRegister(String userAccount, String userPassword, String checkPassword,String userName);
+    BaseResponse<Long> userRegister(String userAccount, String userPassword, String checkPassword, String userName);
 
     /**
      * 用户登录
@@ -35,7 +36,7 @@ public interface UserService extends IService<User> {
      * @param request
      * @return 脱敏后的用户信息
      */
-    LoginUserVO userLogin(String userAccount, String userPassword, HttpServletRequest request);
+    BaseResponse<LoginUserVO> userLogin(String userAccount, String userPassword, HttpServletRequest request);
 
     /**
      * 获取当前登录用户

@@ -1,5 +1,6 @@
 package com.smileqi.web.controller.system;
 
+import cn.hutool.json.JSONArray;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smileqi.common.enums.ErrorCode;
 import com.smileqi.common.exception.BusinessException;
@@ -12,11 +13,15 @@ import com.smileqi.system.model.request.SysMenuAddRequest;
 import com.smileqi.system.model.request.SysMenuQueryRequest;
 import com.smileqi.system.model.request.SysMenuUpdateRequest;
 import com.smileqi.system.service.SysMenuService;
+import com.smileqi.user.model.domain.User;
+import com.smileqi.user.service.UserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 /**
  * 菜单接口
@@ -29,6 +34,8 @@ public class SysMenuController {
 
     @Resource
     private SysMenuService sysMenuService;
+    @Resource
+    private UserService userService;
 
     /**
      * 创建菜单
@@ -100,5 +107,23 @@ public class SysMenuController {
         Page<SysMenu> sysMenuPage = sysMenuService.page(new Page<>(current, size),
                 sysMenuService.getQueryWrapper(sysMenuQueryRequest));
         return ResultUtils.success(sysMenuPage);
+    }
+
+    /**
+     * 获取菜单展示结果
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/showSysMenu")
+    public BaseResponse<List<SysMenu>> showSysMenu(HttpServletRequest request) {
+        //登陆才可以使用
+        User loginUser = null;
+        try {
+            loginUser = userService.getLoginUser(request);
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        return sysMenuService.showSysMenu(loginUser);
     }
 }

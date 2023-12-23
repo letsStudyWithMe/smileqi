@@ -7,6 +7,8 @@ import com.smileqi.common.constant.CommonConstant;
 import com.smileqi.common.enums.ErrorCode;
 import com.smileqi.common.enums.UserRoleEnum;
 import com.smileqi.common.exception.BusinessException;
+import com.smileqi.common.response.BaseResponse;
+import com.smileqi.common.utils.ResultUtils;
 import com.smileqi.common.utils.SqlUtils;
 import com.smileqi.user.mapper.UserMapper;
 import com.smileqi.user.model.domain.User;
@@ -39,23 +41,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     /**
      * 盐值，混淆密码
      */
-    private static final String SALT = "yupi";
+    private static final String SALT = "smileqi";
 
     @Override
-    public long userRegister(String userAccount, String userPassword, String checkPassword,String userName) {
-        // 1. 校验
+    public BaseResponse<Long> userRegister(String userAccount, String userPassword, String checkPassword, String userName) {
+        // 1.校验
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword,userName)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         if (userAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "用户账号过短");
         }
         if (userPassword.length() < 8 || checkPassword.length() < 8) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "用户密码过短");
         }
         // 密码和校验密码相同
         if (!userPassword.equals(checkPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
         }
         synchronized (userAccount.intern()) {
             // 账户不能重复
@@ -63,7 +65,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             queryWrapper.eq("userAccount", userAccount);
             long count = this.baseMapper.selectCount(queryWrapper);
             if (count > 0) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
+                return ResultUtils.error(ErrorCode.PARAMS_ERROR, "账号重复");
             }
             // 2. 加密
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
@@ -74,23 +76,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setUserName(userName);
             boolean saveResult = this.save(user);
             if (!saveResult) {
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
+                return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
             }
-            return user.getId();
+            return ResultUtils.success(user.getId());
         }
     }
 
     @Override
-    public LoginUserVO userLogin(String userAccount, String userPassword, HttpServletRequest request) {
+    public BaseResponse<LoginUserVO> userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         // 1. 校验
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         if (userAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号错误");
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "账号错误");
         }
         if (userPassword.length() < 8) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码错误");
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "密码错误");
         }
         // 2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
@@ -102,11 +104,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 用户不存在
         if (user == null) {
             log.info("user login failed, userAccount cannot match userPassword");
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
         // 3. 记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, user);
-        return this.getLoginUserVO(user);
+        return ResultUtils.success(this.getLoginUserVO(user));
     }
 
     /**
