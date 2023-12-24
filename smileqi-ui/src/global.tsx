@@ -1,8 +1,89 @@
 import '@umijs/max';
 import { Button, message, notification } from 'antd';
 import defaultSettings from '../config/defaultSettings';
+import {request} from "@@/exports";
+import {showSysMenu} from "@/services/smileqi/sysMenuController";
 const { pwa } = defaultSettings;
 const isHttps = document.location.protocol === 'https:';
+
+try {
+  //const msg = await showSysMenu();
+  const routesData = [
+    {
+      "id": 1,
+      "menuId": "welcome",
+      "parentId": "",
+      "enable": true,
+      "name": "欢迎页面",
+      "sort": 1000,
+      "path": "/welcome",
+      "direct": true,
+      "createdAt": "1992-08-17 07:29:03"
+    },
+    {
+      "id": 2,
+      "menuId": "user",
+      "parentId": "",
+      "enable": true,
+      "name": "用户管理",
+      "sort": 2000,
+      "path": "/user",
+      "direct": false,
+      "createdAt": "2011-01-21 09:25:49"
+    },
+    {
+      "id": 3,
+      "menuId": "user_management",
+      "parentId": "user",
+      "enable": true,
+      "name": "用户信息",
+      "sort": 2001,
+      "path": "/user/showUsers",
+      "direct": false,
+      "createdAt": "1986-06-03 02:38:12"
+    },
+    {
+      "id": 4,
+      "menuId": "role_management",
+      "parentId": "user",
+      "enable": true,
+      "name": "角色管理",
+      "sort": 2002,
+      "path": "/user/role",
+      "direct": false,
+      "createdAt": "1986-06-03 02:38:12"
+    },
+    {
+      "id": 5,
+      "menuId": "permission_management",
+      "parentId": "user",
+      "enable": true,
+      "name": "权限管理",
+      "sort": 2003,
+      "path": "/user/permission",
+      "direct": false,
+      "createdAt": "1986-06-03 02:38:12"
+    },
+    {
+      "id": 6,
+      "menuId": "app_management",
+      "parentId": "user",
+      "enable": true,
+      "name": "应用管理",
+      "sort": 2004,
+      "path": "/user/app",
+      "direct": false,
+      "createdAt": "1986-06-03 02:38:12"
+    }
+  ]
+  if (routesData) {
+    window.dynamicRoutes = routesData;
+  }
+} catch {
+  message.error('路由加载失败');
+}
+
+export {};
 const clearCache = () => {
   // remove all caches
   if (window.caches) {

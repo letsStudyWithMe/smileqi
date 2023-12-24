@@ -10,31 +10,24 @@ import {AvatarDropdown, AvatarName} from './components/RightContent/AvatarDropdo
 import {errorConfig} from './requestConfig';
 import {getLoginUser} from "@/services/smileqi/userController";
 import {MenuDataItem} from "@umijs/route-utils";
-import loopMenuItem from "@/fixMenuItemIcon";
+import loopMenuItem from "@/utils/fixMenuItemIcon";
 import {showSysMenu} from "@/services/smileqi/sysMenuController";
+import fixMenuItemIcon from "@/utils/fixMenuItemIcon";
+import {parseRoutes} from "@/utils/dynamicRoutes";
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 
-/*const menuData = [
-  {
-    icon: "BarsOutlined",
-    path: "/system",
-    name: "system",
-    children: [
-      {
-        icon: null,
-        path: "/system/empty",
-        name: "empty"
-      },
-      {
-        icon: "smile",
-        path: "/system/rolelist",
-        name: "rolemanage"
-      }
-    ]
+
+// @ts-ignore
+export function patchRoutes({ routes, routeComponents }) {
+  if (window.dynamicRoutes) {
+    const currentRouteIndex = Object.keys(routes).length;
+    const parsedRoutes = parseRoutes(window.dynamicRoutes, currentRouteIndex);
+    Object.assign(routes, parsedRoutes.routes); // 参数传递的为引用类型，直接操作原对象，合并路由数据
+    Object.assign(routeComponents, parsedRoutes.routeComponents); // 合并组件
   }
-];*/
+}
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
@@ -43,7 +36,7 @@ export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: API.LoginUserVO;
   loading?: boolean;
-  menuData?: MenuDataItem[] | undefined;
+  menuData?: MenuDataItem[];
   fetchUserInfo?: () => Promise<API.LoginUserVO | undefined>;
 }> {
   const fetchUserInfo = async () => {
@@ -60,7 +53,6 @@ export async function getInitialState(): Promise<{
   const fetchUserMenus = async () => {
     try {
       const msg = await showSysMenu();
-      console.log("msg", msg);
       return msg.data;
     } catch (error) {
       history.push(loginPath);
@@ -134,15 +126,14 @@ export const layout: RunTimeLayoutConfig = ({initialState, setInitialState}) => 
         </Link>,
       ]
       : [],
-    menuHeaderRender: undefined,
+    //menuDataRender:(menuData:MenuDataItem[]) => fixMenuItemIcon(menuData),
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     //自定义菜单
-    postMenuData: () => {
-      /*return fixMenuItemIcon(menuData);*/ //不显示icon 解决方法一
-      // @ts-ignore
+    /*postMenuData: () => {
+      //return fixMenuItemIcon(initialState?.menuData); //不显示icon 解决方法一
       return loopMenuItem(initialState?.menuData);//不显示icon 解决方法二
-    },
+    },*/
     // 增加一个 loading 的状态
     childrenRender: (children) => {
       // if (initialState?.loading) return <PageLoading />;

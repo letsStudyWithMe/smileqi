@@ -7,12 +7,19 @@
       { path: '/user/register', name: '注册', component: './User/Register' },
     ],
   },
-  {
+/*  {
     name: '欢迎页面',
-    path: '/welcome',
+    path: "/welcome",
     icon: 'smile',
     component: './Welcome',
   },
+  {
+    path: '/user', name: '用户管理', icon: 'user',
+    hideChildrenInMenu: false,
+    routes: [
+      {path: '/user/showUsers', name: '用户列表', component: './User/Manage',access: 'canAdmin'},
+    ]
+  },*/
   {
     path: '/admin',
     icon: 'crown',

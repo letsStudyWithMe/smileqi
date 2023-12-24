@@ -4,6 +4,7 @@ import cn.hutool.json.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.smileqi.common.enums.ErrorCode;
+import com.smileqi.common.enums.UserRoleEnum;
 import com.smileqi.common.exception.BusinessException;
 import com.smileqi.common.response.BaseResponse;
 import com.smileqi.common.utils.ResultUtils;
@@ -13,9 +14,11 @@ import com.smileqi.system.model.request.SysMenuQueryRequest;
 import com.smileqi.system.service.SysMenuService;
 import com.smileqi.user.model.domain.User;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +28,7 @@ import java.util.List;
 * @createDate 2023-12-21 10:33:06
 */
 @Service
+@Slf4j
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
     implements SysMenuService {
 
@@ -55,25 +59,43 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
      */
     @Override
     public BaseResponse<List<SysMenu>> showSysMenu(User loginUser) {
-        QueryWrapper<SysMenu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("perms",loginUser.getUserRole())
-                .select(SysMenu.class,i->!i.getProperty().equals("children")); ;
-        List<SysMenu> res = sysMenuMapper.selectList(queryWrapper);
-        Iterator<SysMenu> iter = res.iterator();
-        while (iter.hasNext()){
-            SysMenu e = iter.next();
-                Long ID = e.getId();
-                for (SysMenu e1:res){
-                        Long parentId = e1.getParentId();
-                        if (ID.equals(parentId) && e1 != null){
-                            e.setChildren(e1);
-                        }
-                }
-            if (e.getParentId() != 0){
-                iter.remove();
-            }
+        //查询菜单列表
+        List<SysMenu> res = new ArrayList<>();
+        if (loginUser.getUserRole().equals(UserRoleEnum.ADMIN.getValue())){
+            QueryWrapper<SysMenu> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("status",0)
+                    .orderBy(true, true, "parentId", "orderNum")
+                    .select(SysMenu.class,i->!i.getProperty().equals("children")); ;
+            res = sysMenuMapper.selectList(queryWrapper);
+        }else {
+            QueryWrapper<SysMenu> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("status",0)
+                    .like("perms",loginUser.getUserRole())
+                    .orderBy(true, true, "parentId", "orderNum")
+                    .select(SysMenu.class,i->!i.getProperty().equals("children")); ;
+            res = sysMenuMapper.selectList(queryWrapper);
         }
-        System.out.println(res);
+
+        //组成菜单树
+        Iterator<SysMenu> iter = res.iterator();
+        try {
+            while (iter.hasNext()) {
+                SysMenu sysMenu = iter.next();
+                Long sysMenuId = sysMenu.getId();
+                for (SysMenu sysMenuChildren : res) {
+                    Long parentId = sysMenuChildren.getParentId();
+                    if (sysMenuId.equals(parentId) && sysMenuChildren != null) {
+                        sysMenu.setChildren(sysMenuChildren);
+                    }
+                }
+                if (sysMenu.getParentId() != 0) {
+                    iter.remove();
+                }
+            }
+        } catch (Exception e) {
+            log.info("菜单树组装异常"+e.toString());
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR,"菜单树组装异常");
+        }
         return ResultUtils.success(res);
     }
 }
