@@ -4,6 +4,7 @@ import defaultSettings from '../config/defaultSettings';
 import {request} from "@@/exports";
 import {showSysMenu} from "@/services/smileqi/sysMenuController";
 import fixMenuItemIcon from "@/utils/fixMenuItemIcon";
+import axios from "axios";
 const { pwa } = defaultSettings;
 const isHttps = document.location.protocol === 'https:';
 
@@ -77,7 +78,7 @@ try {
       "createdAt": "1986-06-03 02:38:12"
     }
   ]*/
-  fetch('/user/get',{
+/*  fetch('/user/get',{
     method: 'GET', // 或者 'PUT'
   }).then((res) => res.json())
     .then((data) =>{
@@ -95,7 +96,68 @@ try {
             window.dynamicRoutes = fixMenuItemIcon(data.data);
           }
         });
-    })
+    })*/
+  const getCurrentUser = async () => {
+    try {
+/*      const response = axios.get('/api/user/get/login', {
+        params: { request }, // 在这里传递request参数
+      });
+      response.then((res) =>{*/
+/*        const id = 2;
+        const response1 = axios.post('/api/system/showSysMenu', { id });
+        response1.then((res) => {
+          console.log(res.data+"111111111111111111111");
+          window.dynamicRoutes = fixMenuItemIcon(res.data);
+        })*/
+      /*})*/
+     /* const response = await fetch('/api/user/get/login', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = response.json();
+      data.then(async (res) => {
+        console.log(res.data.id);
+        const response = await fetch(`/api/sysmenu/showSysMenu`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(res.data.id),
+        });
+        const data = response.json();
+        data.then(res=>{
+          console.log(res.data+"1111111111111111111111");
+          window.dynamicRoutes = fixMenuItemIcon(res.data);
+        })
+      })*/
+      const response = await fetch(`/api/sysmenu/showSysMenu`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = response.json();
+      data.then(res=>{
+        console.log(res.data+"1111111111111111111111");
+        window.dynamicRoutes = res.data.dynamicRoutes;
+      })
+    /*  const response = await fetch('/api/user/get/login', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = response.json();
+      data.then(res=>{
+        console.log(res.data.id+"1111111111111111111111");
+      })*/
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+    }
+  };
+  getCurrentUser();
 
 
 /*  fetch('http://localhost:8083/api/sysmenu/showSysMenu', {

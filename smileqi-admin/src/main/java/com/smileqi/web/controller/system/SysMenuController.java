@@ -116,15 +116,15 @@ public class SysMenuController {
      * @param request
      * @return
      */
-    @PostMapping("/showSysMenu")
-    public BaseResponse<List<SysMenu>> showSysMenu(HttpServletRequest request, @RequestBody LoginUserVO loginUser) {
+    @GetMapping("/showSysMenu")
+    public BaseResponse<List<SysMenu>> showSysMenu(HttpServletRequest request) {
         //登陆才可以使用
-       /* User loginUser = null;
+        User loginUser = null;
         try {
             loginUser = userService.getLoginUser(request);
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        }*/
+        }
         return sysMenuService.showSysMenu(loginUser.getId());
     }
 }
