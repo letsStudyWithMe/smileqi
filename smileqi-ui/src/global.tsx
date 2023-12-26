@@ -3,11 +3,12 @@ import { Button, message, notification } from 'antd';
 import defaultSettings from '../config/defaultSettings';
 import {request} from "@@/exports";
 import {showSysMenu} from "@/services/smileqi/sysMenuController";
+import fixMenuItemIcon from "@/utils/fixMenuItemIcon";
 const { pwa } = defaultSettings;
 const isHttps = document.location.protocol === 'https:';
 
 try {
-  //const msg = await showSysMenu();
+ /* //const msg = await showSysMenu();
   const routesData = [
     {
       "id": 1,
@@ -38,7 +39,7 @@ try {
       "enable": true,
       "name": "用户信息",
       "sort": 2001,
-      "path": "/user/showUsers",
+      "path": "/user/manage",
       "direct": false,
       "createdAt": "1986-06-03 02:38:12"
     },
@@ -75,10 +76,46 @@ try {
       "direct": false,
       "createdAt": "1986-06-03 02:38:12"
     }
-  ]
-  if (routesData) {
-    window.dynamicRoutes = routesData;
-  }
+  ]*/
+  fetch('/user/get',{
+    method: 'GET', // 或者 'PUT'
+  }).then((res) => res.json())
+    .then((data) =>{
+      fetch('/system/showSysMenu', {
+        method: 'POST', // 或者 'PUT'
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data.id),
+      }).then((res) => res.json())
+        .then((data) => {
+          console.log(data+"11111111111111111111");
+          console.log('Success:', data.data);
+          if (data.data) {
+            window.dynamicRoutes = fixMenuItemIcon(data.data);
+          }
+        });
+    })
+
+
+/*  fetch('http://localhost:8083/api/sysmenu/showSysMenu', {
+    method: 'POST', // 或者 'PUT'
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data+"11111111111111111111");
+      console.log('Success:', data.data);
+      if (data.data) {
+        window.dynamicRoutes = fixMenuItemIcon(data.data);
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });*/
+
 } catch {
   message.error('路由加载失败');
 }

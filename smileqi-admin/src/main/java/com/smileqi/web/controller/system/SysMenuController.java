@@ -14,6 +14,7 @@ import com.smileqi.system.model.request.SysMenuQueryRequest;
 import com.smileqi.system.model.request.SysMenuUpdateRequest;
 import com.smileqi.system.service.SysMenuService;
 import com.smileqi.user.model.domain.User;
+import com.smileqi.user.model.vo.LoginUserVO;
 import com.smileqi.user.service.UserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -116,14 +117,14 @@ public class SysMenuController {
      * @return
      */
     @PostMapping("/showSysMenu")
-    public BaseResponse<List<SysMenu>> showSysMenu(HttpServletRequest request) {
+    public BaseResponse<List<SysMenu>> showSysMenu(HttpServletRequest request, @RequestBody LoginUserVO loginUser) {
         //登陆才可以使用
-        User loginUser = null;
+       /* User loginUser = null;
         try {
             loginUser = userService.getLoginUser(request);
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        }
-        return sysMenuService.showSysMenu(loginUser);
+        }*/
+        return sysMenuService.showSysMenu(loginUser.getId());
     }
 }

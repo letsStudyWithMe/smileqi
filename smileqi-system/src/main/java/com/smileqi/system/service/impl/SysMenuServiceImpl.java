@@ -12,6 +12,7 @@ import com.smileqi.system.mapper.SysMenuMapper;
 import com.smileqi.system.model.domain.SysMenu;
 import com.smileqi.system.model.request.SysMenuQueryRequest;
 import com.smileqi.system.service.SysMenuService;
+import com.smileqi.user.mapper.UserMapper;
 import com.smileqi.user.model.domain.User;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,9 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
 
     @Resource
     private SysMenuMapper sysMenuMapper;
+    @Resource
+    private UserMapper userMapper;
+
 
     /**
      * 根据查询条件进行查询
@@ -54,11 +58,14 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
 
     /**
      * 获取菜单展示结果
-     * @param loginUser
+     * @param userId
      * @return
      */
     @Override
-    public BaseResponse<List<SysMenu>> showSysMenu(User loginUser) {
+    public BaseResponse<List<SysMenu>> showSysMenu(Long userId) {
+        QueryWrapper<User> queryWrapperUser = new QueryWrapper<>();
+        queryWrapperUser.eq("id",userId);
+        User loginUser = userMapper.selectOne(queryWrapperUser);
         //查询菜单列表
         List<SysMenu> res = new ArrayList<>();
         if (loginUser.getUserRole().equals(UserRoleEnum.ADMIN.getValue())){
@@ -76,7 +83,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
             res = sysMenuMapper.selectList(queryWrapper);
         }
 
-        //组成菜单树
+   /*     //组成菜单树
         Iterator<SysMenu> iter = res.iterator();
         try {
             while (iter.hasNext()) {
@@ -95,7 +102,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
         } catch (Exception e) {
             log.info("菜单树组装异常"+e.toString());
             return ResultUtils.error(ErrorCode.PARAMS_ERROR,"菜单树组装异常");
-        }
+        }*/
         return ResultUtils.success(res);
     }
 }

@@ -1,6 +1,7 @@
-import { lazy } from 'react';
-import { Outlet } from '@umijs/max';
+import {lazy} from 'react';
+import {Outlet} from '@umijs/max';
 import {DynamicRoutes} from "@/utils/dynamicRoutes/typings";
+
 export function formatRoutePath(path: string) {
   const words = path.replace(/^\//, '').split(/(?<=\w+)\//); // 提取路径单词
   return `/${words
@@ -16,7 +17,7 @@ export function generateRoutePath(path: string) {
 
 export function generateComponentPath(path: string) {
   const words = path.replace(/^\//, '').split(/(?<=\w+)\//); // 提取路径单词
-  return `${words.join('/pages/')}/index`;
+  return `${words.join('/')}/index`;
 }
 
 export function generateFilePath(path: string) {
@@ -50,6 +51,7 @@ export function parseRoutes(
         id: currentIdx.toString(),
         parentId: 'ant-design-pro-layout',
         name: route.name,
+        icon: route.icon,
         path: routePath,
         file: filePath,
       };
@@ -69,6 +71,7 @@ export function parseRoutes(
           id: currentIdx.toString(),
           parentId: 'ant-design-pro-layout',
           name: route.name,
+          icon: route.icon,
           path: routePath,
         };
         // 存储路由信息
@@ -93,6 +96,7 @@ export function parseRoutes(
             parentId: realParentId.toString(),
             name: route.name,
             path: routePath,
+            icon: route.icon,
             file: filePath,
           };
           // 存储路由信息

@@ -23,6 +23,16 @@ public class SysMenu implements Serializable {
     private Long id;
 
     /**
+     * 菜单标识Id
+     */
+    private String menuId;
+
+    /**
+     * 是否为直接显示（不含子路由）的路由
+     */
+    private boolean direct;
+
+    /**
      * 菜单名称
      */
     private String name;
@@ -84,19 +94,6 @@ public class SysMenu implements Serializable {
      * 备注
      */
     private String remark;
-
-    /**
-     * 子菜单
-     */
-    private List<SysMenu> children = new ArrayList<>();
-
-    public List<SysMenu> getChildren() {
-        return children;
-    }
-
-    public void setChildren(SysMenu children) {
-        this.children.add(children);
-    }
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

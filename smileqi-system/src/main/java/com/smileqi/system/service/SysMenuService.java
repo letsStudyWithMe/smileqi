@@ -27,8 +27,8 @@ public interface SysMenuService extends IService<SysMenu> {
 
     /**
      * 获取菜单展示结果
-     * @param loginUser
+     * @param userId
      * @return
      */
-    BaseResponse<List<SysMenu>> showSysMenu(User loginUser);
+    BaseResponse<List<SysMenu>> showSysMenu(Long userId);
 }

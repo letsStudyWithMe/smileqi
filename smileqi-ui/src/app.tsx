@@ -14,13 +14,28 @@ import loopMenuItem from "@/utils/fixMenuItemIcon";
 import {showSysMenu} from "@/services/smileqi/sysMenuController";
 import fixMenuItemIcon from "@/utils/fixMenuItemIcon";
 import {parseRoutes} from "@/utils/dynamicRoutes";
+import axios from "axios";
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 
+/*export default {
+  created() {
+    this.fetchMenuData();
+  },
+  async fetchMenuData() {
+    try {
+      const response = await axios.get('/sysmenu/showSysMenu'); // 从API获取菜单数据
+      window.dynamicRoutes = fixMenuItemIcon(response.data); // 将菜单数据存储到window.dynamicRoutes中
+    } catch (error) {
+      console.error('获取菜单数据失败：', error);
+    }
+  }
+};*/
 
 // @ts-ignore
 export function patchRoutes({ routes, routeComponents }) {
+  console.log(11111111111+""+window.dynamicRoutes)
   if (window.dynamicRoutes) {
     const currentRouteIndex = Object.keys(routes).length;
     const parsedRoutes = parseRoutes(window.dynamicRoutes, currentRouteIndex);
@@ -50,28 +65,16 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
-  const fetchUserMenus = async () => {
-    try {
-      const msg = await showSysMenu();
-      return msg.data;
-    } catch (error) {
-      history.push(loginPath);
-    }
-    return undefined;
-  };
   // 如果不是登录页面，执行
   const {location} = history;
   if (location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
-    const menuData = await fetchUserMenus();
     return {
       currentUser,
-      menuData,
       settings: defaultSettings as Partial<LayoutSettings>,
     };
   }
   return {
-    menuData: [],
     settings: defaultSettings as Partial<LayoutSettings>,
   };
 }

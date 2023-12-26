@@ -13,6 +13,7 @@ declare namespace DynamicRoutes {
     parentId: string;
     enable: boolean;
     name: string;
+    icon: string;
     sort: number;
     path: string;
     direct: boolean;
@@ -24,6 +25,7 @@ declare namespace DynamicRoutes {
     parentId: 'ant-design-pro-layout' | string;
     name: string;
     path: string;
+    icon: string;
     file?: string;
     children?: Route[];
   }
