@@ -34,10 +34,24 @@ const loginPath = '/user/login';
 };*/
 
 // @ts-ignore
-export function patchRoutes({ routes, routeComponents }) {
-  console.log(11111111111+""+window.dynamicRoutes)
+export async function patchRoutes({routes, routeComponents}) {
+/*  const response = await fetch(`/api/sysmenu/showSysMenu`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then((respone) => {
+    return respone.json();
+  }).then(data => {
+    console.log(data);
+    window.dynamicRoutes = data.data;
+  });*/
+
   if (window.dynamicRoutes) {
+    console.log(window.dynamicRoutes)
+    console.log( Object.keys(routes))
     const currentRouteIndex = Object.keys(routes).length;
+    console.log(currentRouteIndex)
     const parsedRoutes = parseRoutes(window.dynamicRoutes, currentRouteIndex);
     Object.assign(routes, parsedRoutes.routes); // 参数传递的为引用类型，直接操作原对象，合并路由数据
     Object.assign(routeComponents, parsedRoutes.routeComponents); // 合并组件

@@ -35,7 +35,7 @@ export function parseRoutes(
   const routeParentMap = new Map<string, number>(); // menuId 与路由记录在 routes 中的键 的映射。如：'role_management' -> 7
 
   let currentIdx = beginIdx; // 当前处理的路由项的键。把 patchRoutes 传进来的 routes 看作一个数组，这里就是元素的下标。
-
+  console.log(currentIdx)
   routesRaw.forEach((route) => {
     let effectiveRoute = true; // 当前处理中的路由是否有效
 
@@ -49,7 +49,7 @@ export function parseRoutes(
       // 生成路由信息
       const tempRoute: DynamicRoutes.Route = {
         id: currentIdx.toString(),
-        parentId: 'ant-design-pro-layout',
+        parentId:route.parentId,
         name: route.name,
         icon: route.icon,
         path: routePath,
@@ -57,7 +57,6 @@ export function parseRoutes(
       };
       // 存储路由信息
       routes[currentIdx] = tempRoute;
-
       // 生成组件
       const tempComponent = lazy(() => import(`@/pages/${componentPath}`));
       // 存储组件

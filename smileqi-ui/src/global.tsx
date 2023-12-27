@@ -5,78 +5,26 @@ import {request} from "@@/exports";
 import {showSysMenu} from "@/services/smileqi/sysMenuController";
 import fixMenuItemIcon from "@/utils/fixMenuItemIcon";
 import axios from "axios";
+import {data} from "@umijs/utils/compiled/cheerio/lib/api/attributes";
 const { pwa } = defaultSettings;
 const isHttps = document.location.protocol === 'https:';
 
 try {
- /* //const msg = await showSysMenu();
-  const routesData = [
+  //const msg = await showSysMenu();
+/*  const routesData = [
     {
-      "id": 1,
-      "menuId": "welcome",
-      "parentId": "",
-      "enable": true,
-      "name": "欢迎页面",
-      "sort": 1000,
-      "path": "/welcome",
-      "direct": true,
-      "createdAt": "1992-08-17 07:29:03"
+      id: 4,
+      menuId: "welcome",
+      parentId: 0,
+      ico: "smile",
+      name: "欢迎页面",
+      path: "/welcome",
+      direct: true,
+      createTime: "1992-08-17 07:29:03",
+      createBy: null,
+      orderNum: 0,
+      perms: "admin"
     },
-    {
-      "id": 2,
-      "menuId": "user",
-      "parentId": "",
-      "enable": true,
-      "name": "用户管理",
-      "sort": 2000,
-      "path": "/user",
-      "direct": false,
-      "createdAt": "2011-01-21 09:25:49"
-    },
-    {
-      "id": 3,
-      "menuId": "user_management",
-      "parentId": "user",
-      "enable": true,
-      "name": "用户信息",
-      "sort": 2001,
-      "path": "/user/manage",
-      "direct": false,
-      "createdAt": "1986-06-03 02:38:12"
-    },
-    {
-      "id": 4,
-      "menuId": "role_management",
-      "parentId": "user",
-      "enable": true,
-      "name": "角色管理",
-      "sort": 2002,
-      "path": "/user/role",
-      "direct": false,
-      "createdAt": "1986-06-03 02:38:12"
-    },
-    {
-      "id": 5,
-      "menuId": "permission_management",
-      "parentId": "user",
-      "enable": true,
-      "name": "权限管理",
-      "sort": 2003,
-      "path": "/user/permission",
-      "direct": false,
-      "createdAt": "1986-06-03 02:38:12"
-    },
-    {
-      "id": 6,
-      "menuId": "app_management",
-      "parentId": "user",
-      "enable": true,
-      "name": "应用管理",
-      "sort": 2004,
-      "path": "/user/app",
-      "direct": false,
-      "createdAt": "1986-06-03 02:38:12"
-    }
   ]*/
 /*  fetch('/user/get',{
     method: 'GET', // 或者 'PUT'
@@ -97,8 +45,8 @@ try {
           }
         });
     })*/
-  const getCurrentUser = async () => {
-    try {
+/*  const getCurrentUser = async () => {
+    try {*/
 /*      const response = axios.get('/api/user/get/login', {
         params: { request }, // 在这里传递request参数
       });
@@ -132,17 +80,18 @@ try {
           window.dynamicRoutes = fixMenuItemIcon(res.data);
         })
       })*/
-      const response = await fetch(`/api/sysmenu/showSysMenu`, {
+    /*  const response = await fetch(`/api/sysmenu/showSysMenu`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-      });
-      const data = response.json();
-      data.then(res=>{
-        console.log(res.data+"1111111111111111111111");
-        window.dynamicRoutes = res.data.dynamicRoutes;
-      })
+      }).then((respone ) =>{
+       return respone.json();
+      }).then(data=>{
+        console.log(data);
+        window.dynamicRoutes = data.data;
+        console.log(window.dynamicRoutes)
+      });*/
     /*  const response = await fetch('/api/user/get/login', {
         method: 'GET',
         headers: {
@@ -153,11 +102,11 @@ try {
       data.then(res=>{
         console.log(res.data.id+"1111111111111111111111");
       })*/
-    } catch (error) {
+/*    } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
     }
   };
-  getCurrentUser();
+  getCurrentUser();*/
 
 
 /*  fetch('http://localhost:8083/api/sysmenu/showSysMenu', {
@@ -177,7 +126,34 @@ try {
     .catch((error) => {
       console.error('Error:', error);
     });*/
-
+/*  window.dynamicRoutes = fixMenuItemIcon(routesData);*/
+  const routesData =[
+/*    {
+      id: 4,
+      menuId: "welcome",
+      parentId: 0,
+      ico: "smile",
+      name: "欢迎页面",
+      path: "/welcome",
+      direct: true,
+      createTime: "1992-08-17 07:29:03",
+      createBy: null,
+      orderNum: 0,
+      perms: "admin"
+    },*/
+    {
+      "id": 1,
+      "menuId": "welcome",
+      "parentId": "",
+      "enable": true,
+      "name": "欢迎页面",
+      "sort": 1000,
+      "path": "/welcome",
+      "direct": true,
+      "createdAt": "1992-08-17 07:29:03"
+    },
+  ]
+  window.dynamicRoutes = routesData;
 } catch {
   message.error('路由加载失败');
 }

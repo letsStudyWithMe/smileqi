@@ -1,6 +1,8 @@
 package com.smileqi.system.service.impl;
 
 import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.smileqi.common.enums.ErrorCode;
@@ -62,7 +64,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
      * @return
      */
     @Override
-    public BaseResponse<List<SysMenu>> showSysMenu(Long userId) {
+    public BaseResponse<JSONArray> showSysMenu(Long userId) {
         QueryWrapper<User> queryWrapperUser = new QueryWrapper<>();
         queryWrapperUser.eq("id",userId);
         User loginUser = userMapper.selectOne(queryWrapperUser);
@@ -103,7 +105,8 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
             log.info("菜单树组装异常"+e.toString());
             return ResultUtils.error(ErrorCode.PARAMS_ERROR,"菜单树组装异常");
         }*/
-        return ResultUtils.success(res);
+        JSONArray result = new JSONArray(res);
+        return ResultUtils.success(result);
     }
 }
 

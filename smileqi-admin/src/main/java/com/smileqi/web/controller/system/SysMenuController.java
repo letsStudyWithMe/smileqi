@@ -117,7 +117,7 @@ public class SysMenuController {
      * @return
      */
     @GetMapping("/showSysMenu")
-    public BaseResponse<List<SysMenu>> showSysMenu(HttpServletRequest request) {
+    public BaseResponse<JSONArray> showSysMenu(HttpServletRequest request) {
         //登陆才可以使用
         User loginUser = null;
         try {

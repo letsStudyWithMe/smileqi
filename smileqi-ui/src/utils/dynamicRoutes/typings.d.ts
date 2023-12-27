@@ -11,13 +11,10 @@ declare namespace DynamicRoutes {
   interface RouteRaw {
     menuId: string;
     parentId: string;
-    enable: boolean;
     name: string;
     icon: string;
-    sort: number;
     path: string;
     direct: boolean;
-    createdAt: string;
   }
   // 前端根据后端返回数据生成的路由数据
   interface Route {

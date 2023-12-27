@@ -30,5 +30,5 @@ public interface SysMenuService extends IService<SysMenu> {
      * @param userId
      * @return
      */
-    BaseResponse<List<SysMenu>> showSysMenu(Long userId);
+    BaseResponse<JSONArray> showSysMenu(Long userId);
 }
