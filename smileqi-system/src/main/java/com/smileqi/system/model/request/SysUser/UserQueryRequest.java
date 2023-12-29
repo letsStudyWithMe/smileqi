@@ -1,4 +1,4 @@
-package com.smileqi.user.model.request;
+package com.smileqi.system.model.request.SysUser;
 
 import com.smileqi.common.request.PageRequest;
 import lombok.Data;

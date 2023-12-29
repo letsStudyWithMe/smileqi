@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.smileqi.common.response.BaseResponse;
 import com.smileqi.system.model.domain.SysMenu;
-import com.smileqi.system.model.request.SysMenuQueryRequest;
-import com.smileqi.user.model.domain.User;
-
-import java.util.List;
+import com.smileqi.system.model.request.SysMenu.SysMenuQueryRequest;
 
 /**
 * @author smileqi

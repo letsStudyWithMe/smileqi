@@ -1,4 +1,4 @@
-package com.smileqi.system.model.request;
+package com.smileqi.system.model.request.SysMenu;
 
 import lombok.Data;
 

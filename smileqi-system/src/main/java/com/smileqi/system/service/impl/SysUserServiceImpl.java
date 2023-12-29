@@ -1,4 +1,4 @@
-package com.smileqi.user.service.impl;
+package com.smileqi.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -10,19 +10,19 @@ import com.smileqi.common.exception.BusinessException;
 import com.smileqi.common.response.BaseResponse;
 import com.smileqi.common.utils.ResultUtils;
 import com.smileqi.common.utils.SqlUtils;
-import com.smileqi.user.mapper.UserMapper;
-import com.smileqi.user.model.domain.User;
-import com.smileqi.user.model.request.UserQueryRequest;
-import com.smileqi.user.model.vo.LoginUserVO;
-import com.smileqi.user.model.vo.UserVO;
-import com.smileqi.user.service.UserService;
+import com.smileqi.system.mapper.SysUserMapper;
+import com.smileqi.system.model.domain.SysUser;
+import com.smileqi.system.model.request.SysUser.UserQueryRequest;
+import com.smileqi.system.model.vo.LoginUserVO;
+import com.smileqi.system.model.vo.UserVO;
+import com.smileqi.system.service.SysUserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +36,7 @@ import static com.smileqi.common.constant.UserConstant.USER_LOGIN_STATE;
  */
 @Service
 @Slf4j
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
     /**
      * 盐值，混淆密码
@@ -61,7 +61,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         synchronized (userAccount.intern()) {
             // 账户不能重复
-            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+            QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("userAccount", userAccount);
             long count = this.baseMapper.selectCount(queryWrapper);
             if (count > 0) {
@@ -70,7 +70,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             // 2. 加密
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
             // 3. 插入数据
-            User user = new User();
+            SysUser user = new SysUser();
             user.setUserAccount(userAccount);
             user.setUserPassword(encryptPassword);
             user.setUserName(userName);
@@ -97,10 +97,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
         // 查询用户是否存在
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userAccount", userAccount);
         queryWrapper.eq("userPassword", encryptPassword);
-        User user = this.baseMapper.selectOne(queryWrapper);
+        SysUser user = this.baseMapper.selectOne(queryWrapper);
         // 用户不存在
         if (user == null) {
             log.info("user login failed, userAccount cannot match userPassword");
@@ -118,10 +118,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @return
      */
     @Override
-    public User getLoginUser(HttpServletRequest request) {
+    public SysUser getLoginUser(HttpServletRequest request) {
         // 先判断是否已登录
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User currentUser = (User) userObj;
+        SysUser currentUser = (SysUser) userObj;
         if (currentUser == null || currentUser.getId() == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
@@ -141,10 +141,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @return
      */
     @Override
-    public User getLoginUserPermitNull(HttpServletRequest request) {
+    public SysUser getLoginUserPermitNull(HttpServletRequest request) {
         // 先判断是否已登录
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User currentUser = (User) userObj;
+        SysUser currentUser = (SysUser) userObj;
         if (currentUser == null || currentUser.getId() == null) {
             return null;
         }
@@ -163,12 +163,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean isAdmin(HttpServletRequest request) {
         // 仅管理员可查询
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User user = (User) userObj;
+        SysUser user = (SysUser) userObj;
         return isAdmin(user);
     }
 
     @Override
-    public boolean isAdmin(User user) {
+    public boolean isAdmin(SysUser user) {
         return user != null && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole());
     }
 
@@ -188,7 +188,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public LoginUserVO getLoginUserVO(User user) {
+    public LoginUserVO getLoginUserVO(SysUser user) {
         if (user == null) {
             return null;
         }
@@ -198,7 +198,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public UserVO getUserVO(User user) {
+    public UserVO getUserVO(SysUser user) {
         if (user == null) {
             return null;
         }
@@ -208,7 +208,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public List<UserVO> getUserVO(List<User> userList) {
+    public List<UserVO> getUserVO(List<SysUser> userList) {
         if (CollectionUtils.isEmpty(userList)) {
             return new ArrayList<>();
         }
@@ -216,7 +216,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest) {
+    public QueryWrapper<SysUser> getQueryWrapper(UserQueryRequest userQueryRequest) {
         if (userQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
         }
@@ -228,7 +228,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String userRole = userQueryRequest.getUserRole();
         String sortField = userQueryRequest.getSortField();
         String sortOrder = userQueryRequest.getSortOrder();
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(id != null, "id", id);
         queryWrapper.eq(StringUtils.isNotBlank(unionId), "unionId", unionId);
         queryWrapper.eq(StringUtils.isNotBlank(mpOpenId), "mpOpenId", mpOpenId);

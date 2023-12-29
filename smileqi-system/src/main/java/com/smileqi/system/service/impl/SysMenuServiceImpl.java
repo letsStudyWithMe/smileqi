@@ -1,8 +1,6 @@
 package com.smileqi.system.service.impl;
 
 import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONObject;
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.smileqi.common.enums.ErrorCode;
@@ -11,18 +9,17 @@ import com.smileqi.common.exception.BusinessException;
 import com.smileqi.common.response.BaseResponse;
 import com.smileqi.common.utils.ResultUtils;
 import com.smileqi.system.mapper.SysMenuMapper;
+import com.smileqi.system.mapper.SysUserMapper;
 import com.smileqi.system.model.domain.SysMenu;
-import com.smileqi.system.model.request.SysMenuQueryRequest;
+import com.smileqi.system.model.domain.SysUser;
+import com.smileqi.system.model.request.SysMenu.SysMenuQueryRequest;
 import com.smileqi.system.service.SysMenuService;
-import com.smileqi.user.mapper.UserMapper;
-import com.smileqi.user.model.domain.User;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -38,7 +35,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
     @Resource
     private SysMenuMapper sysMenuMapper;
     @Resource
-    private UserMapper userMapper;
+    private SysUserMapper userMapper;
 
 
     /**
@@ -65,9 +62,9 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
      */
     @Override
     public BaseResponse<JSONArray> showSysMenu(Long userId) {
-        QueryWrapper<User> queryWrapperUser = new QueryWrapper<>();
+        QueryWrapper<SysUser> queryWrapperUser = new QueryWrapper<>();
         queryWrapperUser.eq("id",userId);
-        User loginUser = userMapper.selectOne(queryWrapperUser);
+        SysUser loginUser = userMapper.selectOne(queryWrapperUser);
         //查询菜单列表
         List<SysMenu> res = new ArrayList<>();
         if (loginUser.getUserRole().equals(UserRoleEnum.ADMIN.getValue())){

@@ -1,4 +1,4 @@
-package com.smileqi.web.controller.user;
+package com.smileqi.web.controller.system;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smileqi.common.enums.ErrorCode;
@@ -7,16 +7,14 @@ import com.smileqi.common.exception.ThrowUtils;
 import com.smileqi.common.request.DeleteRequest;
 import com.smileqi.common.response.BaseResponse;
 import com.smileqi.common.utils.ResultUtils;
-import com.smileqi.user.model.domain.User;
-import com.smileqi.user.model.request.*;
-import com.smileqi.user.model.vo.LoginUserVO;
-import com.smileqi.user.model.vo.UserVO;
-import com.smileqi.user.service.UserService;
+import com.smileqi.system.model.domain.SysUser;
+import com.smileqi.system.model.request.SysUser.*;
+import com.smileqi.system.model.vo.LoginUserVO;
+import com.smileqi.system.model.vo.UserVO;
+import com.smileqi.system.service.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +26,12 @@ import java.util.List;
  *
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/sysuser")
 @Slf4j
-public class UserController {
+public class SysUserController {
 
     @Resource
-    private UserService userService;
+    private SysUserService userService;
 
     /**
      * 用户注册
@@ -94,7 +92,7 @@ public class UserController {
      */
     @GetMapping("/get/login")
     public BaseResponse<LoginUserVO> getLoginUser(HttpServletRequest request) {
-        User user = userService.getLoginUser(request);
+        SysUser user = userService.getLoginUser(request);
         return ResultUtils.success(userService.getLoginUserVO(user));
     }
 
@@ -110,7 +108,7 @@ public class UserController {
         if (userAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User user = new User();
+        SysUser user = new SysUser();
         BeanUtils.copyProperties(userAddRequest, user);
         boolean result = userService.save(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
@@ -146,7 +144,7 @@ public class UserController {
         if (userUpdateRequest == null || userUpdateRequest.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User user = new User();
+        SysUser user = new SysUser();
         BeanUtils.copyProperties(userUpdateRequest, user);
         boolean result = userService.updateById(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
@@ -161,11 +159,11 @@ public class UserController {
      * @return
      */
     @GetMapping("/get")
-    public BaseResponse<User> getUserById(long id, HttpServletRequest request) {
+    public BaseResponse<SysUser> getUserById(long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User user = userService.getById(id);
+        SysUser user = userService.getById(id);
         ThrowUtils.throwIf(user == null, ErrorCode.NOT_FOUND_ERROR);
         return ResultUtils.success(user);
     }
@@ -179,8 +177,8 @@ public class UserController {
      */
     @GetMapping("/get/vo")
     public BaseResponse<UserVO> getUserVOById(long id, HttpServletRequest request) {
-        BaseResponse<User> response = getUserById(id, request);
-        User user = response.getData();
+        BaseResponse<SysUser> response = getUserById(id, request);
+        SysUser user = response.getData();
         return ResultUtils.success(userService.getUserVO(user));
     }
 
@@ -192,11 +190,11 @@ public class UserController {
      * @return
      */
     @PostMapping("/list/page")
-    public BaseResponse<Page<User>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest,
+    public BaseResponse<Page<SysUser>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest,
                                                    HttpServletRequest request) {
         long current = userQueryRequest.getCurrent();
         long size = userQueryRequest.getPageSize();
-        Page<User> userPage = userService.page(new Page<>(current, size),
+        Page<SysUser> userPage = userService.page(new Page<>(current, size),
                 userService.getQueryWrapper(userQueryRequest));
         return ResultUtils.success(userPage);
     }
@@ -218,7 +216,7 @@ public class UserController {
         long size = userQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<User> userPage = userService.page(new Page<>(current, size),
+        Page<SysUser> userPage = userService.page(new Page<>(current, size),
                 userService.getQueryWrapper(userQueryRequest));
         Page<UserVO> userVOPage = new Page<>(current, size, userPage.getTotal());
         List<UserVO> userVO = userService.getUserVO(userPage.getRecords());
@@ -241,8 +239,8 @@ public class UserController {
         if (userUpdateMyRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User loginUser = userService.getLoginUser(request);
-        User user = new User();
+        SysUser loginUser = userService.getLoginUser(request);
+        SysUser user = new SysUser();
         BeanUtils.copyProperties(userUpdateMyRequest, user);
         user.setId(loginUser.getId());
         boolean result = userService.updateById(user);

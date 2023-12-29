@@ -1,4 +1,4 @@
-package com.smileqi.user.model.domain;
+package com.smileqi.system.model.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -9,11 +9,11 @@ import java.util.Date;
 
 /**
  * 用户
- * @TableName user
+ * @TableName sys_user
  */
-@TableName(value ="user")
+@TableName(value ="sys_user")
 @Data
-public class User implements Serializable {
+public class SysUser implements Serializable {
     /**
      * id
      */
@@ -77,7 +77,7 @@ public class User implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        User other = (User) that;
+        SysUser other = (SysUser) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getUserAccount() == null ? other.getUserAccount() == null : this.getUserAccount().equals(other.getUserAccount()))
             && (this.getUserPassword() == null ? other.getUserPassword() == null : this.getUserPassword().equals(other.getUserPassword()))

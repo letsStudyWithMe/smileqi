@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.smileqi</groupId>
-    <artifactId>smileqi</artifactId>
+    <artifactId>smileqi-backend</artifactId>
     <version>1.0.0</version>
 
-    <name>smileqi</name>
+    <name>smileqi-backend</name>
     <description>smileqi管理后台系统</description>
 
     <properties>

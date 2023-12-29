@@ -1,4 +1,4 @@
-package com.smileqi.user.model.vo;
+package com.smileqi.system.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

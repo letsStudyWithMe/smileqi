@@ -9,20 +9,17 @@ import com.smileqi.common.request.DeleteRequest;
 import com.smileqi.common.response.BaseResponse;
 import com.smileqi.common.utils.ResultUtils;
 import com.smileqi.system.model.domain.SysMenu;
-import com.smileqi.system.model.request.SysMenuAddRequest;
-import com.smileqi.system.model.request.SysMenuQueryRequest;
-import com.smileqi.system.model.request.SysMenuUpdateRequest;
+import com.smileqi.system.model.domain.SysUser;
+import com.smileqi.system.model.request.SysMenu.SysMenuAddRequest;
+import com.smileqi.system.model.request.SysMenu.SysMenuQueryRequest;
+import com.smileqi.system.model.request.SysMenu.SysMenuUpdateRequest;
 import com.smileqi.system.service.SysMenuService;
-import com.smileqi.user.model.domain.User;
-import com.smileqi.user.model.vo.LoginUserVO;
-import com.smileqi.user.service.UserService;
+import com.smileqi.system.service.SysUserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.util.List;
 
 /**
  * 菜单接口
@@ -36,7 +33,7 @@ public class SysMenuController {
     @Resource
     private SysMenuService sysMenuService;
     @Resource
-    private UserService userService;
+    private SysUserService userService;
 
     /**
      * 创建菜单
@@ -119,7 +116,7 @@ public class SysMenuController {
     @GetMapping("/showSysMenu")
     public BaseResponse<JSONArray> showSysMenu(HttpServletRequest request) {
         //登陆才可以使用
-        User loginUser = null;
+        SysUser loginUser = null;
         try {
             loginUser = userService.getLoginUser(request);
         } catch (Exception e) {
