@@ -21,6 +21,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 菜单接口
  *
@@ -116,12 +121,50 @@ public class SysMenuController {
     @GetMapping("/showSysMenu")
     public BaseResponse<JSONArray> showSysMenu(HttpServletRequest request) {
         //登陆才可以使用
-        SysUser loginUser = null;
+/*        SysUser loginUser = null;
         try {
             loginUser = userService.getLoginUser(request);
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        }
-        return sysMenuService.showSysMenu(loginUser.getId());
+        }*/
+        List<Map<String, Object>> menuList = new ArrayList<>();
+
+        Map<String, Object> menu1 = new HashMap<>();
+        menu1.put("path", "/dashboard");
+        menu1.put("name", "dashboard");
+        Map<String, Object> meta1 = new HashMap<>();
+        meta1.put("locale", "menu.server.dashboard");
+        meta1.put("requiresAuth", true);
+        meta1.put("icon", "icon-dashboard");
+        meta1.put("order", 1);
+        menu1.put("meta", meta1);
+
+        List<Map<String, Object>> children1 = new ArrayList<>();
+        Map<String, Object> child1 = new HashMap<>();
+        child1.put("path", "workplace");
+        child1.put("name", "Workplace");
+        Map<String, Object> meta2 = new HashMap<>();
+        meta2.put("locale", "menu.server.workplace");
+        meta2.put("requiresAuth", true);
+        child1.put("meta", meta2);
+        children1.add(child1);
+
+        Map<String, Object> child2 = new HashMap<>();
+        child2.put("path", "https://arco.design");
+        child2.put("name", "arcoWebsite");
+        Map<String, Object> meta3 = new HashMap<>();
+        meta3.put("locale", "menu.arcoWebsite");
+        meta3.put("requiresAuth", true);
+        child2.put("meta", meta3);
+        children1.add(child2);
+
+        menu1.put("children", children1);
+        menuList.add(menu1);
+
+        System.out.println(menuList);
+
+        JSONArray objects = new JSONArray(menuList);
+        //      return sysMenuService.showSysMenu(loginUser.getId());
+        return ResultUtils.success(objects);
     }
 }
