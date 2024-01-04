@@ -8,6 +8,7 @@ import com.smileqi.common.enums.ErrorCode;
 import com.smileqi.common.enums.UserRoleEnum;
 import com.smileqi.common.exception.BusinessException;
 import com.smileqi.common.response.BaseResponse;
+import com.smileqi.common.utils.JwtUtil;
 import com.smileqi.common.utils.ResultUtils;
 import com.smileqi.common.utils.SqlUtils;
 import com.smileqi.system.mapper.SysUserMapper;
@@ -24,7 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.smileqi.common.constant.UserConstant.USER_LOGIN_STATE;
@@ -108,7 +111,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         }
         // 3. 记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, user);
-        return ResultUtils.success(this.getLoginUserVO(user));
+        // 4. 返回用户token
+        Map<String, String> tokenMap = new HashMap<>();
+        tokenMap.put("token", user.getId().toString());
+        String token = JwtUtil.getToken(tokenMap);
+
+        return ResultUtils.success(this.getLoginUserVO(user,token));
     }
 
     /**
@@ -188,12 +196,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public LoginUserVO getLoginUserVO(SysUser user) {
+    public LoginUserVO getLoginUserVO(SysUser user,String token) {
         if (user == null) {
             return null;
         }
         LoginUserVO loginUserVO = new LoginUserVO();
         BeanUtils.copyProperties(user, loginUserVO);
+        loginUserVO.setToken(token);
         return loginUserVO;
     }
 
@@ -238,5 +247,19 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
+    }
+
+    /**
+     * 获取用户信息根据用户id
+     * @param userId
+     * @return
+     */
+    @Override
+    public SysUser getSysUser(Long userId) {
+        // 查询用户
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", userId);
+        SysUser user = this.baseMapper.selectOne(queryWrapper);
+        return user;
     }
 }

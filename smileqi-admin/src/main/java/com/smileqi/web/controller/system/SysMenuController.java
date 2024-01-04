@@ -164,7 +164,9 @@ public class SysMenuController {
         System.out.println(menuList);
 
         JSONArray objects = new JSONArray(menuList);
-        //      return sysMenuService.showSysMenu(loginUser.getId());
+
+
+        //sysMenuService.showSysMenu(loginUser.getId());
         return ResultUtils.success(objects);
     }
 }

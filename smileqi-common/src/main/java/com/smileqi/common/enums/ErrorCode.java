@@ -10,6 +10,8 @@ public enum ErrorCode {
     PARAMS_ERROR(40000, "请求参数错误"),
     NOT_LOGIN_ERROR(40100, "未登录"),
     NO_AUTH_ERROR(40101, "无权限"),
+    NO_TOKEN(40102,"无token，请重新登录"),
+    TOKEN_ERROR(40103,"token验证失败，请重新登录"),
     NOT_FOUND_ERROR(40400, "请求数据不存在"),
     TOO_MANY_REQUEST(40401, "请求过于频繁"),
     FORBIDDEN_ERROR(40300, "禁止访问"),

@@ -83,7 +83,7 @@ public interface SysUserService extends IService<SysUser> {
      *
      * @return
      */
-    LoginUserVO getLoginUserVO(SysUser user);
+    LoginUserVO getLoginUserVO(SysUser user,String token);
 
     /**
      * 获取脱敏的用户信息
@@ -109,4 +109,10 @@ public interface SysUserService extends IService<SysUser> {
      */
     QueryWrapper<SysUser> getQueryWrapper(UserQueryRequest userQueryRequest);
 
+    /**
+     *  获取用户信息根据用户id
+     * @param userId
+     * @return
+     */
+    SysUser getSysUser(Long userId);
 }

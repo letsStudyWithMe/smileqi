@@ -39,6 +39,11 @@ public class LoginUserVO implements Serializable {
     private String userRole;
 
     /**
+     * 用户 id
+     */
+    private String token;
+
+    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")

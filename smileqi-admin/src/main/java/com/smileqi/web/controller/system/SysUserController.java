@@ -1,5 +1,6 @@
 package com.smileqi.web.controller.system;
 
+import com.auth0.jwt.JWT;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smileqi.common.enums.ErrorCode;
 import com.smileqi.common.exception.BusinessException;
@@ -34,6 +35,24 @@ public class SysUserController {
     private SysUserService userService;
 
     /**
+     * 用户登录
+     *
+     * @param userLoginRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/login")
+    public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
+        if (userLoginRequest == null) {
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
+        }
+        String userAccount = userLoginRequest.getUserAccount();
+        String userPassword = userLoginRequest.getUserPassword();
+        return userService.userLogin(userAccount, userPassword, request);
+
+    }
+
+    /**
      * 用户注册
      *
      * @param userRegisterRequest
@@ -50,23 +69,6 @@ public class SysUserController {
         String checkPassword = userRegisterRequest.getCheckPassword();
         String userName = userRegisterRequest.getUserName();
         return userService.userRegister(userAccount, userPassword, checkPassword,userName);
-    }
-
-    /**
-     * 用户登录
-     *
-     * @param userLoginRequest
-     * @param request
-     * @return
-     */
-    @PostMapping("/login")
-    public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
-        if (userLoginRequest == null) {
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
-        }
-        String userAccount = userLoginRequest.getUserAccount();
-        String userPassword = userLoginRequest.getUserPassword();
-        return userService.userLogin(userAccount, userPassword, request);
     }
 
     /**
@@ -92,8 +94,11 @@ public class SysUserController {
      */
     @GetMapping("/get/login")
     public BaseResponse<LoginUserVO> getLoginUser(HttpServletRequest request) {
-        SysUser user = userService.getLoginUser(request);
-        return ResultUtils.success(userService.getLoginUserVO(user));
+        String token = request.getHeader("token");
+        String userId = JWT.decode(token).getAudience().get(0);
+        //SysUser user = userService.getLoginUser(request);
+        SysUser sysUser = userService.getSysUser(Long.valueOf(userId));
+        return ResultUtils.success(userService.getLoginUserVO(sysUser,token));
     }
 
     /**
