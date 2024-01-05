@@ -1,16 +1,13 @@
-package com.ruoyi.framework.interceptor;
+package com.smileqi.framework.interceptor;
 
 import cn.hutool.core.text.CharSequenceUtil;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.smileqi.common.annotation.PassToken;
 import com.smileqi.common.enums.ErrorCode;
 import com.smileqi.common.exception.BusinessException;
+import com.smileqi.common.utils.JwtUtil;
 import com.smileqi.system.model.domain.SysUser;
 import com.smileqi.system.service.SysUserService;
+import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,6 +18,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 @Component
 public class MyJwtInterceptor implements HandlerInterceptor {
@@ -52,24 +50,18 @@ public class MyJwtInterceptor implements HandlerInterceptor {
             throw new BusinessException(ErrorCode.NO_TOKEN);
         }
         //获取token中的用户id
-        String userId;
+        Long userId;
         try {
-            userId = JWT.decode(token).getAudience().get(0);
-        } catch (JWTDecodeException j) {
+            Claims claims = JwtUtil.parseToken(token);
+            userId = (Long) claims.get("userId");
+        } catch (Exception e) {
+            System.out.println(e);
             throw new BusinessException(ErrorCode.TOKEN_ERROR);
         }
         //根据token中的userId查询数据库
         SysUser sysUser = sysUserService.getById(userId);
         if (sysUser == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-        }
- 
-        //验证token
-        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(KEY)).build();
-        try {
-            jwtVerifier.verify(token);
-        } catch (JWTVerificationException e) {
-            throw new BusinessException(406, "权限验证失败！");
         }
         return true;
     }

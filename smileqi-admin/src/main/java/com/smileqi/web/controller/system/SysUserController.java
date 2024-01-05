@@ -1,18 +1,20 @@
 package com.smileqi.web.controller.system;
 
-import com.auth0.jwt.JWT;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.smileqi.common.annotation.PassToken;
 import com.smileqi.common.enums.ErrorCode;
 import com.smileqi.common.exception.BusinessException;
 import com.smileqi.common.exception.ThrowUtils;
 import com.smileqi.common.request.DeleteRequest;
 import com.smileqi.common.response.BaseResponse;
+import com.smileqi.common.utils.JwtUtil;
 import com.smileqi.common.utils.ResultUtils;
 import com.smileqi.system.model.domain.SysUser;
 import com.smileqi.system.model.request.SysUser.*;
 import com.smileqi.system.model.vo.LoginUserVO;
 import com.smileqi.system.model.vo.UserVO;
 import com.smileqi.system.service.SysUserService;
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +44,7 @@ public class SysUserController {
      * @return
      */
     @PostMapping("/login")
+    @PassToken
     public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR);
@@ -50,25 +53,6 @@ public class SysUserController {
         String userPassword = userLoginRequest.getUserPassword();
         return userService.userLogin(userAccount, userPassword, request);
 
-    }
-
-    /**
-     * 用户注册
-     *
-     * @param userRegisterRequest
-     * @return
-     */
-    @PostMapping("/register")
-    @Operation(summary = "用户注册")
-    public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
-        if (userRegisterRequest == null) {
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
-        }
-        String userAccount = userRegisterRequest.getUserAccount();
-        String userPassword = userRegisterRequest.getUserPassword();
-        String checkPassword = userRegisterRequest.getCheckPassword();
-        String userName = userRegisterRequest.getUserName();
-        return userService.userRegister(userAccount, userPassword, checkPassword,userName);
     }
 
     /**
@@ -95,19 +79,37 @@ public class SysUserController {
     @GetMapping("/get/login")
     public BaseResponse<LoginUserVO> getLoginUser(HttpServletRequest request) {
         String token = request.getHeader("token");
-        String userId = JWT.decode(token).getAudience().get(0);
-        //SysUser user = userService.getLoginUser(request);
-        SysUser sysUser = userService.getSysUser(Long.valueOf(userId));
+        Long userId = JwtUtil.getLoginUserId(request);
+        SysUser sysUser = userService.getById(userId);
         return ResultUtils.success(userService.getLoginUserVO(sysUser,token));
     }
 
     /**
+     * 用户注册
+     *
+     * @param userRegisterRequest
+     * @return
+     */
+    @PostMapping("/register")
+    @Operation(summary = "用户注册")
+    public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
+        if (userRegisterRequest == null) {
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
+        }
+        String userAccount = userRegisterRequest.getUserAccount();
+        String userPassword = userRegisterRequest.getUserPassword();
+        String checkPassword = userRegisterRequest.getCheckPassword();
+        String userName = userRegisterRequest.getUserName();
+        return userService.userRegister(userAccount, userPassword, checkPassword,userName);
+    }
+
+   /* *//**
      * 创建用户
      *
      * @param userAddRequest
      * @param request
      * @return
-     */
+     *//*
     @PostMapping("/add")
     public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest, HttpServletRequest request) {
         if (userAddRequest == null) {
@@ -118,7 +120,7 @@ public class SysUserController {
         boolean result = userService.save(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(user.getId());
-    }
+    }*/
 
     /**
      * 删除用户
@@ -228,8 +230,6 @@ public class SysUserController {
         userVOPage.setRecords(userVO);
         return ResultUtils.success(userVOPage);
     }
-
-    // endregion
 
     /**
      * 更新个人信息

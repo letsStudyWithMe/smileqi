@@ -108,11 +108,4 @@ public interface SysUserService extends IService<SysUser> {
      * @return
      */
     QueryWrapper<SysUser> getQueryWrapper(UserQueryRequest userQueryRequest);
-
-    /**
-     *  获取用户信息根据用户id
-     * @param userId
-     * @return
-     */
-    SysUser getSysUser(Long userId);
 }

@@ -28,9 +28,19 @@ public class SysMenu implements Serializable {
     private String menuId;
 
     /**
+     * 菜单名称国际化
+     */
+    private String locale;
+
+    /**
      * 是否为直接显示（不含子路由）的路由
      */
     private boolean direct;
+
+    /**
+     * 是否需要访问权限
+     */
+    private boolean requiresAuth;
 
     /**
      * 菜单名称
@@ -94,6 +104,19 @@ public class SysMenu implements Serializable {
      * 备注
      */
     private String remark;
+
+    /**
+     * 子菜单
+     */
+    private List<SysMenu> children = new ArrayList<>();
+
+    public List<SysMenu> getChildren() {
+        return children;
+    }
+
+    public void setChildren(SysMenu children) {
+        this.children.add(children);
+    }
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
