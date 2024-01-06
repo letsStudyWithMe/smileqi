@@ -71,14 +71,6 @@ public interface SysUserService extends IService<SysUser> {
     boolean isAdmin(SysUser user);
 
     /**
-     * 用户注销
-     *
-     * @param request
-     * @return
-     */
-    boolean userLogout(HttpServletRequest request);
-
-    /**
      * 获取脱敏的已登录用户信息
      *
      * @return

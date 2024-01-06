@@ -84,44 +84,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
             res = sysMenuMapper.selectList(queryWrapper);
         }
 
-/*        List<Map<String, Object>> menuList = new ArrayList<>();
-
-        Map<String, Object> menu1 = new HashMap<>();
-        menu1.put("path", "/dashboard");
-        menu1.put("name", "dashboard");
-        Map<String, Object> meta1 = new HashMap<>();
-        meta1.put("locale", "menu.server.dashboard");
-        meta1.put("requiresAuth", true);
-        meta1.put("icon", "icon-dashboard");
-        meta1.put("order", 1);
-        menu1.put("meta", meta1);
-
-        List<Map<String, Object>> children1 = new ArrayList<>();
-        Map<String, Object> child1 = new HashMap<>();
-        child1.put("path", "workplace");
-        child1.put("name", "Workplace");
-        Map<String, Object> meta2 = new HashMap<>();
-        meta2.put("locale", "menu.server.workplace");
-        meta2.put("requiresAuth", true);
-        child1.put("meta", meta2);
-        children1.add(child1);
-
-        Map<String, Object> child2 = new HashMap<>();
-        child2.put("path", "https://arco.design");
-        child2.put("name", "arcoWebsite");
-        Map<String, Object> meta3 = new HashMap<>();
-        meta3.put("locale", "menu.arcoWebsite");
-        meta3.put("requiresAuth", true);
-        child2.put("meta", meta3);
-        children1.add(child2);
-
-        menu1.put("children", children1);
-        menuList.add(menu1);
-
-        System.out.println(menuList);
-
-        JSONArray objects = new JSONArray(menuList);*/
-
         //组成菜单树
         Iterator<SysMenu> iter = res.iterator();
         try {
@@ -143,35 +105,13 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
             return ResultUtils.error(ErrorCode.PARAMS_ERROR,"菜单树组装异常");
         }
 
-
-/*        for (SysMenu menu : res) {
-            MenuItem menuItem = new MenuItem();
-            menuItem.setPath(menu.getPath());
-            menuItem.setName(menu.getName());
-            menuItem.setMeta(new Meta(menu.getLocale(),
-                    menu.isRequiresAuth(),
-                    menu.getIcon(),
-                    menu.getOrderNum()));
-            List<MenuItem> resultChild = new ArrayList<>();
-            for (SysMenu child : menu.getChildren()) {
-                MenuItem menuItemChildren = new MenuItem();
-                menuItemChildren.setPath(child.getPath());
-                menuItemChildren.setName(child.getName());
-                menuItemChildren.setMeta(new Meta(child.getLocale(),
-                        child.isRequiresAuth(),
-                        child.getIcon(),
-                        child.getOrderNum()));
-                resultChild.add(menuItemChildren);
-            }
-            menuItem.setChildren(resultChild);
-        }*/
         List<MenuItem> result = new ArrayList<>();
-
         int index = 0;
         while (index < res.size()) {
             SysMenu menu = res.get(index);
             MenuItem menuItem = new MenuItem();
             menuItem.setPath(menu.getPath());
+            menuItem.setComponent(menu.getComponent());
             menuItem.setName(menu.getName());
             menuItem.setMeta(new Meta(menu.getLocale(),
                     menu.isRequiresAuth(),
@@ -183,6 +123,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
                 SysMenu child = menu.getChildren().get(childIndex);
                 MenuItem menuItemChildren = new MenuItem();
                 menuItemChildren.setPath(child.getPath());
+                menuItemChildren.setComponent(child.getComponent());
                 menuItemChildren.setName(child.getName());
                 menuItemChildren.setMeta(new Meta(child.getLocale(),
                         child.isRequiresAuth(),
@@ -196,26 +137,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
             result.add(menuItem);
         }
 
-       /* //组成菜单树
-        Iterator<MenuItem> iter = result.iterator();
-        try {
-            while (iter.hasNext()) {
-                MenuItem menuItem = iter.next();
-                Long sysMenuId = menuItem.getId();
-                for (MenuItem menuItemChildren : result) {
-                    Long parentId = menuItemChildren.getParentId();
-                    if (sysMenuId.equals(parentId) && menuItemChildren != null) {
-                        menuItem.setChildren(menuItemChildren);
-                    }
-                }
-                if (menuItem.getParentId() != 0) {
-                    iter.remove();
-                }
-            }
-        } catch (Exception e) {
-            log.info("菜单树组装异常"+e.toString());
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR,"菜单树组装异常");
-        }*/
         JSONArray resultFinal = new JSONArray(result);
         System.out.println(resultFinal);
         return ResultUtils.success(resultFinal);

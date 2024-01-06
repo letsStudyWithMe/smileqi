@@ -33,6 +33,11 @@ public class SysMenu implements Serializable {
     private String locale;
 
     /**
+     * 路径
+     */
+    private String component;
+
+    /**
      * 是否为直接显示（不含子路由）的路由
      */
     private boolean direct;

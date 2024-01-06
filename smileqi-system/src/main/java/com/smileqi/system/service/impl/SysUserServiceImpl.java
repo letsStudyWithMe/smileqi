@@ -79,27 +79,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             log.info("user login failed, userAccount cannot match userPassword");
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
-        // 3. 记录用户的登录态
-        request.getSession().setAttribute(USER_LOGIN_STATE, user);
-        // 4. 返回用户token
+        // 3. 返回用户token
         String token = JwtUtil.createToken(user.getId());
 
         return ResultUtils.success(this.getLoginUserVO(user,token));
-    }
-
-    /**
-     * 用户退出登录
-     *
-     * @param request
-     */
-    @Override
-    public boolean userLogout(HttpServletRequest request) {
-        if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "未登录");
-        }
-        // 移除登录态
-        request.getSession().removeAttribute(USER_LOGIN_STATE);
-        return true;
     }
 
     @Override

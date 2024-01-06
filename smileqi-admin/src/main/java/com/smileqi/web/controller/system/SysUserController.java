@@ -56,21 +56,6 @@ public class SysUserController {
     }
 
     /**
-     * 退出登录
-     *
-     * @param request
-     * @return
-     */
-    @PostMapping("/logout")
-    public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
-        if (request == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        boolean result = userService.userLogout(request);
-        return ResultUtils.success(result);
-    }
-
-    /**
      * 获取当前登录用户
      *
      * @param request

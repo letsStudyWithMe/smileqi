@@ -8,6 +8,7 @@ import java.util.List;
 public class MenuItem {
     private String path;
     private String name;
+    private String component;
     private Meta meta;
     private List<MenuItem> children;
 
