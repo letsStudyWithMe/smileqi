@@ -20,27 +20,13 @@ public class SysMenu implements Serializable {
      * 菜单ID
      */
     @TableId(type = IdType.AUTO)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
-
-    /**
-     * 菜单标识Id
-     */
-    private String menuId;
 
     /**
      * 菜单名称国际化
      */
     private String locale;
-
-    /**
-     * 路径
-     */
-    private String component;
-
-    /**
-     * 是否为直接显示（不含子路由）的路由
-     */
-    private boolean direct;
 
     /**
      * 是否需要访问权限
@@ -70,7 +56,6 @@ public class SysMenu implements Serializable {
     /**
      * 菜单状态（0正常 1停用）
      */
-    @TableLogic
     private String status;
 
     /**
@@ -108,11 +93,13 @@ public class SysMenu implements Serializable {
     /**
      * 备注
      */
+    @TableField(value = "remark", select = false)
     private String remark;
 
     /**
      * 子菜单
      */
+    @TableField(exist = false)
     private List<SysMenu> children = new ArrayList<>();
 
     public List<SysMenu> getChildren() {

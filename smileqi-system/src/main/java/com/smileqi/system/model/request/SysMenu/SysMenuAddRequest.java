@@ -45,5 +45,22 @@ public class SysMenuAddRequest implements Serializable {
      */
     private String remark;
 
+    /**
+     * 国际化
+     */
+    private String locale;
+
+    /**
+     *  是否需要访问权限
+     */
+    private boolean requiresAuth;
+
+    /**
+     *  状态
+     */
+    private String status;
+
+
+
     private static final long serialVersionUID = 1L;
 }

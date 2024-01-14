@@ -18,15 +18,14 @@ import java.util.List;
 public interface SysUserService extends IService<SysUser> {
 
     /**
-     * 用户注册
+     * 添加用户
      *
      * @param userAccount   用户账户
      * @param userPassword  用户密码
-     * @param checkPassword 校验密码
      * @param userName 昵称
      * @return 新用户 id
      */
-    BaseResponse<Long> userRegister(String userAccount, String userPassword, String checkPassword, String userName);
+    BaseResponse<Long> userRegister(String userAccount, String userPassword, String userName, String userRole);
 
     /**
      * 用户登录

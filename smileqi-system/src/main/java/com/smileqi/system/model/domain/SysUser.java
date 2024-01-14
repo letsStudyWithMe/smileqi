@@ -18,6 +18,7 @@ public class SysUser implements Serializable {
      * id
      */
     @TableId(type = IdType.ASSIGN_ID)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
     /**
@@ -60,7 +61,7 @@ public class SysUser implements Serializable {
     /**
      * 是否删除
      */
-    @TableLogic
+    // @TableLogic  是否逻辑删除注解
     private Integer isDelete;
 
     @TableField(exist = false)

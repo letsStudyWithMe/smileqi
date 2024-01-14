@@ -2,6 +2,7 @@ package com.smileqi.system.service.impl;
 
 import cn.hutool.json.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.smileqi.common.enums.ErrorCode;
 import com.smileqi.common.enums.UserRoleEnum;
@@ -18,11 +19,12 @@ import com.smileqi.system.model.request.SysMenu.SysMenuQueryRequest;
 import com.smileqi.system.service.SysMenuService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.swing.plaf.metal.MetalBorders;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
 * @author smileqi
@@ -52,13 +54,15 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
         }
         String name = sysMenuQueryRequest.getName();
+        String status = sysMenuQueryRequest.getStatus();
         QueryWrapper<SysMenu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(name), "name", name);
+        queryWrapper.like(StringUtils.isNotBlank(name), "name", name)
+                    .eq(StringUtils.isNotBlank(status), "status", status);
         return queryWrapper;
     }
 
     /**
-     * 获取菜单展示结果
+     * 获取菜单展示结果（待优化）
      * @param userId
      * @return
      */
@@ -72,15 +76,13 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
         if (loginUser.getUserRole().equals(UserRoleEnum.ADMIN.getValue())){
             QueryWrapper<SysMenu> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("status",0)
-                    .orderBy(true, true, "parentId", "orderNum")
-                    .select(SysMenu.class,i->!i.getProperty().equals("children")); ;
+                    .orderBy(true, true, "parentId", "orderNum");
             res = sysMenuMapper.selectList(queryWrapper);
         }else {
             QueryWrapper<SysMenu> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("status",0)
                     .like("perms",loginUser.getUserRole())
-                    .orderBy(true, true, "parentId", "orderNum")
-                    .select(SysMenu.class,i->!i.getProperty().equals("children")); ;
+                    .orderBy(true, true, "parentId", "orderNum");
             res = sysMenuMapper.selectList(queryWrapper);
         }
 
@@ -111,7 +113,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
             SysMenu menu = res.get(index);
             MenuItem menuItem = new MenuItem();
             menuItem.setPath(menu.getPath());
-            menuItem.setComponent(menu.getComponent());
             menuItem.setName(menu.getName());
             menuItem.setMeta(new Meta(menu.getLocale(),
                     menu.isRequiresAuth(),
@@ -123,7 +124,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
                 SysMenu child = menu.getChildren().get(childIndex);
                 MenuItem menuItemChildren = new MenuItem();
                 menuItemChildren.setPath(child.getPath());
-                menuItemChildren.setComponent(child.getComponent());
                 menuItemChildren.setName(child.getName());
                 menuItemChildren.setMeta(new Meta(child.getLocale(),
                         child.isRequiresAuth(),

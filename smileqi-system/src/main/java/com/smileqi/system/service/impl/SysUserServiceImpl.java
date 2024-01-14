@@ -85,21 +85,25 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         return ResultUtils.success(this.getLoginUserVO(user,token));
     }
 
+    /**
+     * 添加用户
+     * @param userAccount   用户账户
+     * @param userPassword  用户密码
+     * @param userName 昵称
+     * @param userRole 角色
+     * @return
+     */
     @Override
-    public BaseResponse<Long> userRegister(String userAccount, String userPassword, String checkPassword, String userName) {
+    public BaseResponse<Long> userRegister(String userAccount, String userPassword, String userName,String userRole) {
         // 1.校验
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword,userName)) {
+        if (StringUtils.isAnyBlank(userAccount, userPassword,userName,userRole)) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         if (userAccount.length() < 4) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "用户账号过短");
         }
-        if (userPassword.length() < 8 || checkPassword.length() < 8) {
+        if (userPassword.length() < 8) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "用户密码过短");
-        }
-        // 密码和校验密码相同
-        if (!userPassword.equals(checkPassword)) {
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
         }
         synchronized (userAccount.intern()) {
             // 账户不能重复
@@ -116,6 +120,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             user.setUserAccount(userAccount);
             user.setUserPassword(encryptPassword);
             user.setUserName(userName);
+            user.setUserRole(userRole);
             boolean saveResult = this.save(user);
             if (!saveResult) {
                 return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
@@ -219,21 +224,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         if (userQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
         }
-        Long id = userQueryRequest.getId();
-        String unionId = userQueryRequest.getUnionId();
-        String mpOpenId = userQueryRequest.getMpOpenId();
         String userName = userQueryRequest.getUserName();
-        String userProfile = userQueryRequest.getUserProfile();
         String userRole = userQueryRequest.getUserRole();
+        String userAccount = userQueryRequest.getUserAccount();
         String sortField = userQueryRequest.getSortField();
         String sortOrder = userQueryRequest.getSortOrder();
         QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(id != null, "id", id);
-        queryWrapper.eq(StringUtils.isNotBlank(unionId), "unionId", unionId);
-        queryWrapper.eq(StringUtils.isNotBlank(mpOpenId), "mpOpenId", mpOpenId);
         queryWrapper.eq(StringUtils.isNotBlank(userRole), "userRole", userRole);
-        queryWrapper.like(StringUtils.isNotBlank(userProfile), "userProfile", userProfile);
         queryWrapper.like(StringUtils.isNotBlank(userName), "userName", userName);
+        queryWrapper.like(StringUtils.isNotBlank(userAccount), "userAccount", userAccount);
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;

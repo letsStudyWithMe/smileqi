@@ -5,7 +5,6 @@ import com.smileqi.common.annotation.PassToken;
 import com.smileqi.common.enums.ErrorCode;
 import com.smileqi.common.exception.BusinessException;
 import com.smileqi.common.exception.ThrowUtils;
-import com.smileqi.common.request.DeleteRequest;
 import com.smileqi.common.response.BaseResponse;
 import com.smileqi.common.utils.JwtUtil;
 import com.smileqi.common.utils.ResultUtils;
@@ -14,10 +13,10 @@ import com.smileqi.system.model.request.SysUser.*;
 import com.smileqi.system.model.vo.LoginUserVO;
 import com.smileqi.system.model.vo.UserVO;
 import com.smileqi.system.service.SysUserService;
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,6 +55,28 @@ public class SysUserController {
     }
 
     /**
+     * 添加用户
+     *
+     * @param userRegisterRequest
+     * @return
+     */
+    @PostMapping("/register")
+    @Operation(summary = "添加用户")
+    public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
+        if (userRegisterRequest == null) {
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
+        }
+        String userAccount = userRegisterRequest.getUserAccount();
+        String userPassword = userRegisterRequest.getUserPassword();
+        String userName = userRegisterRequest.getUserName();
+        String userRole = "user";
+        if (!StringUtils.isAnyBlank(userRegisterRequest.getUserRole())){
+            userRole = userRegisterRequest.getUserRole();
+        }
+        return userService.userRegister(userAccount, userPassword,userName,userRole);
+    }
+
+    /**
      * 获取当前登录用户
      *
      * @param request
@@ -70,56 +91,36 @@ public class SysUserController {
     }
 
     /**
-     * 用户注册
+     * 根据 id 获取用户
      *
-     * @param userRegisterRequest
+     * @param id
      * @return
      */
-    @PostMapping("/register")
-    @Operation(summary = "用户注册")
-    public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
-        if (userRegisterRequest == null) {
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
-        }
-        String userAccount = userRegisterRequest.getUserAccount();
-        String userPassword = userRegisterRequest.getUserPassword();
-        String checkPassword = userRegisterRequest.getCheckPassword();
-        String userName = userRegisterRequest.getUserName();
-        return userService.userRegister(userAccount, userPassword, checkPassword,userName);
-    }
-
-   /* *//**
-     * 创建用户
-     *
-     * @param userAddRequest
-     * @param request
-     * @return
-     *//*
-    @PostMapping("/add")
-    public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest, HttpServletRequest request) {
-        if (userAddRequest == null) {
+    @GetMapping("/get/{id}")
+    public BaseResponse<SysUser> getUserById(@PathVariable("id") long id) {
+        if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        SysUser user = new SysUser();
-        BeanUtils.copyProperties(userAddRequest, user);
-        boolean result = userService.save(user);
-        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-        return ResultUtils.success(user.getId());
-    }*/
+        SysUser user = userService.getById(id);
+        ThrowUtils.throwIf(user == null, ErrorCode.NOT_FOUND_ERROR);
+        return ResultUtils.success(user);
+    }
 
     /**
      * 删除用户
      *
-     * @param deleteRequest
-     * @param request
+     * @param id
      * @return
      */
-    @PostMapping("/delete")
-    public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+    @GetMapping("/delete/{id}")
+    public BaseResponse<Boolean> deleteUser(@PathVariable("id") long id) {
+        if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean b = userService.removeById(deleteRequest.getId());
+        SysUser sysUser = new SysUser();
+        sysUser.setId(id);
+        sysUser.setIsDelete(1);
+        boolean b = userService.updateById(sysUser);
         return ResultUtils.success(b);
     }
 
@@ -127,12 +128,10 @@ public class SysUserController {
      * 更新用户
      *
      * @param userUpdateRequest
-     * @param request
      * @return
      */
     @PostMapping("/update")
-    public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
-            HttpServletRequest request) {
+    public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest) {
         if (userUpdateRequest == null || userUpdateRequest.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -144,32 +143,14 @@ public class SysUserController {
     }
 
     /**
-     * 根据 id 获取用户（仅管理员）
-     *
-     * @param id
-     * @param request
-     * @return
-     */
-    @GetMapping("/get")
-    public BaseResponse<SysUser> getUserById(long id, HttpServletRequest request) {
-        if (id <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        SysUser user = userService.getById(id);
-        ThrowUtils.throwIf(user == null, ErrorCode.NOT_FOUND_ERROR);
-        return ResultUtils.success(user);
-    }
-
-    /**
      * 根据 id 获取包装类
      *
      * @param id
-     * @param request
      * @return
      */
     @GetMapping("/get/vo")
-    public BaseResponse<UserVO> getUserVOById(long id, HttpServletRequest request) {
-        BaseResponse<SysUser> response = getUserById(id, request);
+    public BaseResponse<UserVO> getUserVOById(long id) {
+        BaseResponse<SysUser> response = getUserById(id);
         SysUser user = response.getData();
         return ResultUtils.success(userService.getUserVO(user));
     }
@@ -178,12 +159,10 @@ public class SysUserController {
      * 分页获取用户列表（仅管理员）
      *
      * @param userQueryRequest
-     * @param request
      * @return
      */
     @PostMapping("/list/page")
-    public BaseResponse<Page<SysUser>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest,
-                                                   HttpServletRequest request) {
+    public BaseResponse<Page<SysUser>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest) {
         long current = userQueryRequest.getCurrent();
         long size = userQueryRequest.getPageSize();
         Page<SysUser> userPage = userService.page(new Page<>(current, size),

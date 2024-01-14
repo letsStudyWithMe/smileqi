@@ -8,6 +8,8 @@ import com.smileqi.common.response.BaseResponse;
 import com.smileqi.system.model.domain.SysMenu;
 import com.smileqi.system.model.request.SysMenu.SysMenuQueryRequest;
 
+import java.util.List;
+
 /**
 * @author smileqi
 * @description 针对表【sys_menu(菜单权限表)】的数据库操作Service

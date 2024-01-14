@@ -16,6 +16,7 @@ public class UserVO implements Serializable {
     /**
      * id
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
     /**
@@ -24,19 +25,24 @@ public class UserVO implements Serializable {
     private String userName;
 
     /**
+     * 用户账号
+     */
+    private String userAccount;
+
+    /**
      * 用户头像
      */
     private String userAvatar;
 
     /**
-     * 用户简介
-     */
-    private String userProfile;
-
-    /**
      * 用户角色：user/admin/ban
      */
     private String userRole;
+
+    /**
+     * 状态
+     */
+    private Integer isDelete;
 
     /**
      * 创建时间

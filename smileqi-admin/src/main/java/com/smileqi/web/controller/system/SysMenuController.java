@@ -5,12 +5,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smileqi.common.enums.ErrorCode;
 import com.smileqi.common.exception.BusinessException;
 import com.smileqi.common.exception.ThrowUtils;
-import com.smileqi.common.request.DeleteRequest;
 import com.smileqi.common.response.BaseResponse;
 import com.smileqi.common.utils.JwtUtil;
 import com.smileqi.common.utils.ResultUtils;
 import com.smileqi.system.model.domain.SysMenu;
-import com.smileqi.system.model.domain.SysUser;
 import com.smileqi.system.model.request.SysMenu.SysMenuAddRequest;
 import com.smileqi.system.model.request.SysMenu.SysMenuQueryRequest;
 import com.smileqi.system.model.request.SysMenu.SysMenuUpdateRequest;
@@ -22,10 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 菜单接口
@@ -38,8 +33,6 @@ public class SysMenuController {
 
     @Resource
     private SysMenuService sysMenuService;
-    @Resource
-    private SysUserService userService;
 
     /**
      * 创建菜单
@@ -55,6 +48,7 @@ public class SysMenuController {
         }
         SysMenu sysMenu = new SysMenu();
         BeanUtils.copyProperties(sysMenuAddRequest, sysMenu);
+        sysMenu.setCreateTime(new Date());
         boolean result = sysMenuService.save(sysMenu);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(sysMenu.getId());
@@ -63,16 +57,18 @@ public class SysMenuController {
     /**
      * 删除菜单
      *
-     * @param deleteRequest
-     * @param request
+     * @param id
      * @return
      */
-    @PostMapping("/delete")
-    public BaseResponse<Boolean> deleteSysMenu(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+    @GetMapping("/delete/{id}")
+    public BaseResponse<Boolean> deleteSysMenu(@PathVariable("id") long id) {
+        if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean b = sysMenuService.removeById(deleteRequest.getId());
+        SysMenu sysMenu = new SysMenu();
+        sysMenu.setId(id);
+        sysMenu.setStatus("1");
+        boolean b = sysMenuService.updateById(sysMenu);
         return ResultUtils.success(b);
     }
 
@@ -100,12 +96,10 @@ public class SysMenuController {
      * 分页获取菜单列表（仅管理员）
      *
      * @param sysMenuQueryRequest
-     * @param request
      * @return
      */
     @PostMapping("/list/page")
-    public BaseResponse<Page<SysMenu>> listSysMenuByPage(@RequestBody SysMenuQueryRequest sysMenuQueryRequest,
-            HttpServletRequest request) {
+    public BaseResponse<Page<SysMenu>> listSysMenuByPage(@RequestBody SysMenuQueryRequest sysMenuQueryRequest) {
         long current = sysMenuQueryRequest.getCurrent();
         long size = sysMenuQueryRequest.getPageSize();
         Page<SysMenu> sysMenuPage = sysMenuService.page(new Page<>(current, size),
@@ -123,5 +117,59 @@ public class SysMenuController {
     public BaseResponse<JSONArray> showSysMenu(HttpServletRequest request) {
         Long loginUserId = JwtUtil.getLoginUserId(request);
         return sysMenuService.showSysMenu(loginUserId);
+    }
+
+    /**
+     * 分页获取菜单列表（仅管理员）
+     *
+     * @param sysMenuQueryRequest
+     * @return
+     */
+    @PostMapping("/list/page/menuTree")
+    public BaseResponse<Page<SysMenu>> listSysMenuByPageMenuTree(@RequestBody SysMenuQueryRequest sysMenuQueryRequest) {
+        long current = sysMenuQueryRequest.getCurrent();
+        long size = sysMenuQueryRequest.getPageSize();
+        Page<SysMenu> sysMenuPage = sysMenuService.page(new Page<>(current, size),
+                sysMenuService.getQueryWrapper(sysMenuQueryRequest));
+        if (sysMenuPage.getTotal() <= 1 || "1".equals(sysMenuQueryRequest.getStatus())){
+            return ResultUtils.success(sysMenuPage);
+        }
+        //组成菜单树
+        Iterator<SysMenu> iter = sysMenuPage.getRecords().iterator();
+        try {
+            while (iter.hasNext()) {
+                SysMenu sysMenu = iter.next();
+                Long sysMenuId = sysMenu.getId();
+                for (SysMenu sysMenuChildren : sysMenuPage.getRecords()) {
+                    Long parentId = sysMenuChildren.getParentId();
+                    if (sysMenuId.equals(parentId) && sysMenuChildren != null) {
+                        sysMenu.setChildren(sysMenuChildren);
+                    }
+                }
+                if (sysMenu.getParentId() != 0){
+                    iter.remove();
+                }
+            }
+        } catch (Exception e) {
+            log.info("菜单树组装异常"+e.toString());
+        }
+        sysMenuPage.setTotal(sysMenuPage.getRecords().size());
+        return ResultUtils.success(sysMenuPage);
+    }
+
+    /**
+     * 根据 id 获取菜单
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/get/{id}")
+    public BaseResponse<SysMenu> getMenuById(@PathVariable("id") long id) {
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        SysMenu sysMenu = sysMenuService.getById(id);
+        ThrowUtils.throwIf(sysMenu == null, ErrorCode.NOT_FOUND_ERROR);
+        return ResultUtils.success(sysMenu);
     }
 }

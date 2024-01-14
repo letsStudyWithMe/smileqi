@@ -14,29 +14,14 @@ import java.io.Serializable;
 @Data
 public class UserQueryRequest extends PageRequest implements Serializable {
     /**
-     * id
-     */
-    private Long id;
-
-    /**
-     * 开放平台id
-     */
-    private String unionId;
-
-    /**
-     * 公众号openId
-     */
-    private String mpOpenId;
-
-    /**
      * 用户昵称
      */
     private String userName;
 
     /**
-     * 简介
+     * 账号
      */
-    private String userProfile;
+    private String userAccount;
 
     /**
      * 用户角色：user/admin/ban

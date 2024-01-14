@@ -55,7 +55,6 @@ public class MyJwtInterceptor implements HandlerInterceptor {
             Claims claims = JwtUtil.parseToken(token);
             userId = (Long) claims.get("userId");
         } catch (Exception e) {
-            System.out.println(e);
             throw new BusinessException(ErrorCode.TOKEN_ERROR);
         }
         //根据token中的userId查询数据库
