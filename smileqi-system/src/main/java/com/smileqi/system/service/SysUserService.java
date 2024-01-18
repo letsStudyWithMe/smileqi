@@ -99,4 +99,13 @@ public interface SysUserService extends IService<SysUser> {
      * @return
      */
     QueryWrapper<SysUser> getQueryWrapper(UserQueryRequest userQueryRequest);
+
+    /**
+     * 修改密码
+     * @param sysUser
+     * @param passwordLater
+     * @param password
+     * @param passwordCheck
+     */
+    BaseResponse<Object> updatePassword(SysUser sysUser, String passwordLater, String password, String passwordCheck);
 }

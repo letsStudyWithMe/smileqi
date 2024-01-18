@@ -237,4 +237,32 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
                 sortField);
         return queryWrapper;
     }
+
+    /**
+     * 修改密码
+     * @param sysUser
+     * @param passwordLater
+     * @param password
+     * @param passwordCheck
+     */
+    @Override
+    public BaseResponse<Object> updatePassword(SysUser sysUser, String passwordLater, String password, String passwordCheck) {
+        // 1.校验
+        if (StringUtils.isAnyBlank(passwordLater,password,passwordCheck)) {
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "参数为空");
+        }
+        if (password.length() < 8) {
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "用户密码过短");
+        }
+        String encryptPasswordLater = DigestUtils.md5DigestAsHex((SALT + passwordLater).getBytes());
+        if (!sysUser.getUserPassword().equals(encryptPasswordLater)){
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "原始密码不正确");
+        }
+        // 2. 加密
+        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + password).getBytes());
+        // 3. 更新密码
+        sysUser.setUserPassword(encryptPassword);
+        boolean b = this.updateById(sysUser);
+        return ResultUtils.success(b);
+    }
 }

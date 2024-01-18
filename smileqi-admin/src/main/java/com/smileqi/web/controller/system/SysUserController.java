@@ -216,4 +216,23 @@ public class SysUserController {
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
+
+    /**
+     * 修改密码
+     *
+     * @param updatePasswordRequest
+     * @return
+     */
+    @PostMapping("/updatePassword")
+    public BaseResponse<Object> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest,HttpServletRequest request) {
+        if (updatePasswordRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        String passwordLater = updatePasswordRequest.getUserPasswordLater();
+        String password = updatePasswordRequest.getUserPassword();
+        String passwordCheck = updatePasswordRequest.getUserPasswordCheck();
+        Long userId = JwtUtil.getLoginUserId(request);
+        SysUser sysUser = userService.getById(userId);
+        return userService.updatePassword(sysUser,passwordLater,password,passwordCheck);
+    }
 }
